@@ -1,101 +1,58 @@
 # Art Studio
 
-A full-stack application for buying original paintings, booking wall painting and requesting custom pottery. Customers manage their own activity; studio users manage paintings and review requests.
+This is my project for the GDGC web development recruitment task. Customers can buy paintings, book wall painting and request pottery. The studio account manages paintings and responds to requests.
 
-## Stack
+I used HTML, CSS and plain JavaScript for the frontend, with Express and SQLite for the backend. There is no frontend framework or build step. Dark mode opens by default, and there is a light mode switch too.
 
-- Frontend: HTML, plain CSS and browser JavaScript. Dark mode is the default, with a saved light-theme preference.
-- Backend: Node.js 24 and Express 5.
-- Database: SQLite through Node's built-in database API, using explicit SQL and transactions.
+## Run it
 
-There is no frontend build step. Express is the only direct npm dependency.
-
-## Run locally
-
-Install **Node.js 24.x**; the project was checked with 24.20.0. Open the folder containing package.json and run:
+You need **Node.js 24.x** because the app uses its built-in SQLite support.
 
 ```sh
 npm ci
 ```
 
-Copy `.env.example` to `.env`. On Windows PowerShell use `Copy-Item .env.example .env`; on macOS/Linux use `cp .env.example .env`. In .env, replace the STUDIO_PASSWORD placeholder with your own password of 10-128 characters. Leave the optional settings commented unless needed. Then run:
+Copy `.env.example` to `.env` and replace the `STUDIO_PASSWORD` placeholder with a password of 10-128 characters. Leave the optional settings commented unless you want to change them.
+
+On Windows, the copy command is `Copy-Item .env.example .env`. On macOS/Linux, use `cp .env.example .env`.
 
 ```sh
 npm run seed
 npm start
 ```
 
-Open **http://localhost:3000**. Keep the terminal running and stop it with Ctrl+C. On Windows, use `npm.cmd` if PowerShell blocks npm.ps1. After initial setup, `start-studio.cmd` also starts the app from the correct folder.
+Open **http://localhost:3000**. Keep the terminal running. If PowerShell blocks npm, use `npm.cmd` instead. After the first setup, Windows users can also run `start-studio.cmd`.
 
-The first seed requires STUDIO_PASSWORD to create the studio account; its value is hashed before storage. Later seed runs preserve the existing password, accounts, painting edits and transactions, and do not require STUDIO_PASSWORD again. Changing the environment variable does not reset an existing account. Use the Express URL; opening public/index.html directly cannot provide API or session features.
+## Login
 
-## Accounts and features
+Sign up to create a customer account. The studio email is **studio@artstudio.in**, and its password is the one you chose in `.env` before the first seed. The `studio` role is the admin role from the brief.
 
-Create a customer account with **Sign up**. Passwords must contain 10-128 characters. The studio login uses:
+Passwords are hashed before saving. Running the seed again keeps existing accounts and data; it does not reset the studio password.
 
-```text
-Email: studio@artstudio.in
-Password: the value you chose for STUDIO_PASSWORD before the first seed
-```
+## What works
 
-No studio password is committed in the source or seed dataset. Signup always creates a customer. The `studio` role corresponds to the brief's admin role.
+- Painting collection, purchase and cancellation. Cancelling makes the painting available again. The studio can add paintings and edit available ones.
+- Wall bookings for 7-90 days ahead, with a size of 10-500 sq ft. The rate comes from the seed data. The studio confirms or declines requests, and customers can cancel through the day three days before the booking.
+- Pottery requests using the supplied items and glazes, quantities of 1-12 and a needed-by date at least 14 days ahead. Customers can edit or cancel while requested; the studio can accept or decline.
+- Customer records are private to their owner. Role and ownership checks happen on the server. The interface has loading, empty, error and retry states.
 
-- **Paintings:** studio users add paintings and edit available works. Customers buy available originals and cancel their own placed orders, releasing the painting.
-- **Wall painting:** choose a date 7-90 Kolkata calendar days away, a size of 10-500 sq ft and an address. The server uses the seeded rate, currently ₹150/sq ft. Requested/confirmed bookings reserve their date. The studio confirms/declines; customers may cancel through the calendar day three days before the booking.
-- **Pottery:** choose a seeded item/glaze, an integer quantity of 1-12 and a needed-by date at least 14 days away. Customers edit/cancel while requested; the studio accepts/declines.
-- **Permissions and feedback:** customer records are restricted to their owner. Signed-out requests receive 401, wrong-role actions 403 and another customer's record 404. Data screens provide loading, empty and error/retry states; conflicts have clear messages.
+## Code
 
-Use separate browser profiles if you want simultaneous customer and studio sessions.
+- `public/` has the HTML, one stylesheet, browser JavaScript and artwork.
+- `src/routes/` has one route file for each feature.
+- `src/schema.sql` defines the tables and constraints. `src/db.js` handles transactions.
+- `seed/seed.json` contains the supplied data, with the shared demo password removed.
+- `test/` has the integration tests. [DESIGN.md](DESIGN.md) explains the main decisions and remaining scope.
 
-## Configuration and storage
-
-`.env.example` lists every variable with placeholders. STUDIO_PASSWORD is required for first-time seeding; the other variables have these defaults:
-
-| Variable | Default |
-| --- | --- |
-| STUDIO_PASSWORD | No default; choose locally before the first seed |
-| PORT | 3000 |
-| HOST | 127.0.0.1 |
-| DATABASE_PATH | data/art-studio.sqlite |
-| APP_ORIGIN | http://localhost:3000 |
-| COOKIE_SECURE | false |
-| SESSION_HOURS | 12 |
-
-For a different port, update PORT and APP_ORIGIN together. APP_ORIGIN must be the exact browser origin without a trailing slash. HTTPS requires COOKIE_SECURE=true. Keep DATABASE_PATH outside public/.
-
-SQLite persists activity in data/art-studio.sqlite. Restarting the app does not erase committed records. Keep data/ when applying updates. Only public/ is served as static content. .gitignore excludes node_modules/, private databases, logs and real .env files; commit .env.example instead.
-
-## Checks
+## Tests and notes
 
 ```sh
 npm run check
 npm test
 ```
 
-The syntax check covers 19 JavaScript files. The 23 tests use isolated temporary databases and cover first-seed password setup, repeat-seed preservation, authentication, permissions, ownership, validation, purchase/date conflicts, cancellation, studio decisions, restart/reseed persistence, failed writes, lock recovery and abrupt process termination. Test-only studio passwords are generated during the test run; no .env is needed for tests. These are local functional/recovery tests, not a production load or complete accessibility audit.
+There are 23 tests covering setup, login, permissions, validation, conflicting purchases/bookings, failed writes and restart recovery. They use temporary databases, so they do not reset normal app data. No `.env` is needed for tests.
 
-## Project structure
+Normal data is saved in `data/art-studio.sqlite` and survives a restart. Keep that folder when updating the code. `.env`, databases and `node_modules` are ignored by Git. If you change the port, change `APP_ORIGIN` to match it; other options are listed in `.env.example`.
 
-```text
-public/                 HTML, CSS, browser scripts, artwork and local fonts
-src/app.js              Shared request checks and route mounting
-src/server.js           HTTP server startup and shutdown
-src/routes/             Auth, catalog, paintings, orders, bookings and pottery
-src/auth.js             Session-cookie and role checks
-src/passwords.js        Password hashing and verification
-src/validation.js       Input and calendar validation
-src/db.js               SQLite connection and transactions
-src/schema.sql          Tables, constraints and active reservation indexes
-src/seed.js             Repeatable seed import
-seed/seed.json          Supplied studio, painting, item, glaze and rate data
-scripts/                Syntax checker and integration-test worker
-test/                   HTTP, persistence and recovery tests
-```
-
-Feature routes keep validation, SQL and JSON responses together. See [DESIGN.md](DESIGN.md) for authentication, database and concurrency decisions, completed scope and next improvements.
-
-## Troubleshooting and scope
-
-For an npm ENOENT error, enter the folder containing package.json. If port 3000 is busy, stop the previous server or configure another port/origin. If node:sqlite is unavailable, install Node 24.x. A source-code change needs a server restart; HTML/CSS changes need a browser refresh.
-
-Buying creates an order without charging money. Real payments, image uploads, email, password reset, deployment and CI are outside scope.
+Buying only creates an order. Real payments, uploads, emails, password reset and deployment are outside this project's scope.

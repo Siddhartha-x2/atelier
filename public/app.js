@@ -2,9 +2,7 @@
 const view = document.querySelector("#view");
 // Preserve a pristine copy of the authored HTML for returning to the homepage.
 const homeTemplate = document.createElement("template");
-homeTemplate.content.append(
-  ...Array.from(view.childNodes, (node) => node.cloneNode(true)),
-);
+homeTemplate.content.append(...Array.from(view.childNodes, (node) => node.cloneNode(true)));
 const notice = document.querySelector("#notice");
 const navigation = document.querySelector("#navigation");
 const account = document.querySelector("#account");
@@ -38,25 +36,20 @@ let fieldCount = 0;
 function el(tag, props = {}, ...children) {
   const node = document.createElement(tag);
   for (const [key, value] of Object.entries(props)) {
-    if (key.startsWith("on"))
-      node.addEventListener(key.slice(2).toLowerCase(), value);
+    if (key.startsWith("on")) node.addEventListener(key.slice(2).toLowerCase(), value);
     else if (key === "className") node.className = value;
     else if (key === "text") node.textContent = value;
     else node.setAttribute(key, value);
   }
   for (const child of children.flat()) {
     if (child !== null && child !== undefined)
-      node.append(
-        child instanceof Node ? child : document.createTextNode(String(child)),
-      );
+      node.append(child instanceof Node ? child : document.createTextNode(String(child)));
   }
   return node;
 }
-const button = (label, onClick, className = "") =>
-  el("button", { type: "button", className, onClick }, label);
+const button = (label, onClick, className = "") => el("button", { type: "button", className, onClick }, label);
 const badge = (status) => el("span", { className: `badge ${status}` }, status);
-const arrowButton = (label, onClick, className = "") =>
-  button(`${label} ↗`, onClick, className);
+const arrowButton = (label, onClick, className = "") => button(`${label} ↗`, onClick, className);
 let noticeTimer;
 function message(text, error = false) {
   window.clearTimeout(noticeTimer);
@@ -96,8 +89,7 @@ async function action(work) {
   message("");
   const active = document.activeElement;
   const trigger =
-    active?.closest("form")?.querySelector('button[type="submit"]') ||
-    (active?.tagName === "BUTTON" ? active : null);
+    active?.closest("form")?.querySelector('button[type="submit"]') || (active?.tagName === "BUTTON" ? active : null);
   const originalLabel = trigger?.textContent;
   if (trigger) {
     trigger.textContent = "Working…";
@@ -130,9 +122,7 @@ async function action(work) {
   }
 }
 function heading(title, detail, eyebrow = "From the atelier") {
-  return el(
-    "div",
-    { className: "intro" },
+  return el("div", { className: "intro" },
     el("p", { className: "eyebrow" }, eyebrow),
     el("h1", {}, title),
     el("p", { className: "muted" }, detail),
@@ -146,11 +136,7 @@ function beginLogin(signup = false, destination = null) {
 function openScreen(screen, push = true) {
   if (state.pending || state.sessionLoading) return;
   screen = resolveScreen(screen);
-  if (push)
-    writeRoute(
-      !state.user && !["home", "auth"].includes(screen) ? "auth" : screen,
-      false,
-    );
+  if (push) writeRoute(!state.user && !["home", "auth"].includes(screen) ? "auth" : screen, false);
   homeCleanup();
   closeArtwork();
   message("");
@@ -170,10 +156,7 @@ function updateHeader() {
   navigation.replaceChildren();
   const studio = state.user?.role === "studio";
   document.body.dataset.screen = state.screen;
-  document.body.classList.toggle(
-    "studio-view",
-    studio && state.screen !== "home",
-  );
+  document.body.classList.toggle("studio-view", studio && state.screen !== "home");
   const labels = {
     home: "The atelier",
     ...(studio ? { dashboard: "Studio overview" } : {}),
@@ -190,9 +173,7 @@ function updateHeader() {
     );
   else
     account.append(
-      el(
-        "span",
-        { className: "account-name" },
+      el("span", { className: "account-name" },
         state.user.name,
         el("small", {}, studio ? "Studio member" : "Your studio account"),
       ),
@@ -217,13 +198,9 @@ function updateHeader() {
     navigation.append(tab);
   }
   if (state.sessionLoading)
-    document
-      .querySelectorAll("#account button, #navigation button")
-      .forEach((node) => (node.disabled = true));
+    document.querySelectorAll("#account button, #navigation button").forEach((node) => (node.disabled = true));
 }
-document
-  .querySelector("#brand-home")
-  .addEventListener("click", () => openScreen("home"));
+document.querySelector("#brand-home").addEventListener("click", () => openScreen("home"));
 // Public editorial captions identify the supplied art, without claiming live inventory.
 const startingCollection = [
   {
@@ -243,24 +220,15 @@ const startingCollection = [
   },
 ];
 function framedArtwork(work, className = "") {
-  return el(
-    "figure",
-    { className: `framed-work ${className}` },
-    el(
-      "div",
-      { className: "frame-picture" },
+  return el("figure", { className: `framed-work ${className}` },
+    el("div", { className: "frame-picture" },
       el("img", {
         src: work.image,
         alt: work.title,
         loading: className.includes("hero") ? "eager" : "lazy",
       }),
     ),
-    el(
-      "figcaption",
-      {},
-      el("span", {}, work.title),
-      el("small", {}, work.artist),
-    ),
+    el("figcaption", {}, el("span", {}, work.title), el("small", {}, work.artist)),
   );
 }
 function makeWallStudy() {
@@ -276,9 +244,7 @@ function makeWallStudy() {
     "aria-describedby": `wall-description-${n}`,
     "aria-valuetext": "62 percent painted wall revealed",
   });
-  const after = el(
-    "div",
-    { className: "room-after" },
+  const after = el("div", { className: "room-after" },
     el("img", {
       src: "/illustrations/room-painted.svg",
       alt: "",
@@ -286,11 +252,7 @@ function makeWallStudy() {
       loading: "lazy",
     }),
   );
-  const divider = el(
-    "div",
-    { className: "room-divider", "aria-hidden": "true" },
-    el("span", {}, "↔"),
-  );
+  const divider = el("div", { className: "room-divider", "aria-hidden": "true" }, el("span", {}, "↔"));
   const room = el(
     "div",
     {
@@ -315,27 +277,15 @@ function makeWallStudy() {
     const value = Number(range.value);
     after.style.clipPath = `inset(0 0 0 ${100 - value}%)`;
     divider.style.left = `${100 - value}%`;
-    range.setAttribute(
-      "aria-valuetext",
-      `${value} percent painted wall revealed`,
-    );
+    range.setAttribute("aria-valuetext", `${value} percent painted wall revealed`);
     output.value = `${value}% revealed`;
   }
   range.addEventListener("input", update);
   update();
-  return el(
-    "figure",
-    { className: "wall-study" },
+  return el("figure", { className: "wall-study" },
     room,
-    el(
-      "figcaption",
-      {},
-      el("label", { for: id }, "Drag to make a little room for colour"),
-      output,
-    ),
-    el(
-      "p",
-      { className: "study-note", id: `wall-description-${n}` },
+    el("figcaption", {}, el("label", { for: id }, "Drag to make a little room for colour"), output),
+    el("p", { className: "study-note", id: `wall-description-${n}` },
       "Before: a plain plaster wall. After: pigment blue, a vermilion arch and a saffron sun. An illustrated possibility for your space.",
     ),
   );
@@ -380,9 +330,7 @@ function showHome() {
   view.replaceChildren(homeTemplate.content.cloneNode(true));
   view
     .querySelectorAll("[data-page]")
-    .forEach((node) =>
-      node.addEventListener("click", () => openScreen(node.dataset.page)),
-    );
+    .forEach((node) => node.addEventListener("click", () => openScreen(node.dataset.page)));
   view.querySelectorAll("[data-artwork]").forEach((node) =>
     node.addEventListener("click", () => {
       const work = startingCollection[Number(node.dataset.artwork)];
@@ -390,48 +338,36 @@ function showHome() {
         title: work.title,
         artist: work.artist,
         imageUrl: work.image,
-        description:
-          "From the Art Studio collection. Open the collection for current prices and availability.",
+        description: "From the Art Studio collection. Open the collection for current prices and availability.",
       });
     }),
   );
   view.querySelector(".commission-link").addEventListener("click", (event) => {
     event.preventDefault();
     view.querySelector("#personal-services").scrollIntoView({
-      behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
-        ? "instant"
-        : "smooth",
+      behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
     });
   });
   const range = view.querySelector("#home-wall-reveal");
   range.addEventListener("input", () => {
     const value = Number(range.value);
-    view.querySelector(".room-after").style.clipPath =
-      `inset(0 0 0 ${100 - value}%)`;
+    view.querySelector(".room-after").style.clipPath = `inset(0 0 0 ${100 - value}%)`;
     view.querySelector(".room-divider").style.left = `${100 - value}%`;
-    range.setAttribute(
-      "aria-valuetext",
-      `${value} percent painted wall revealed`,
-    );
+    range.setAttribute("aria-valuetext", `${value} percent painted wall revealed`);
     view.querySelector(".wall-study output").value = `${value}% revealed`;
   });
   function updateGlaze(id) {
     state.potteryGlaze = id;
-    view.querySelector(".clay-display .clay-object").className =
-      `clay-object glaze-${id}`;
+    view.querySelector(".clay-display .clay-object").className = `clay-object glaze-${id}`;
     view
       .querySelectorAll("[data-glaze]")
-      .forEach((node) =>
-        node.setAttribute("aria-pressed", String(node.dataset.glaze === id)),
-      );
+      .forEach((node) => node.setAttribute("aria-pressed", String(node.dataset.glaze === id)));
     view.querySelector(".glaze-name").textContent =
       glazeStudies.find(([value]) => value === id)?.[1] || "Sandalwood Beige";
   }
   view
     .querySelectorAll("[data-glaze]")
-    .forEach((node) =>
-      node.addEventListener("click", () => updateGlaze(node.dataset.glaze)),
-    );
+    .forEach((node) => node.addEventListener("click", () => updateGlaze(node.dataset.glaze)));
   updateGlaze(state.potteryGlaze);
   const depthCleanup = setupStageDepth(view.querySelector(".artwork-stage"));
   const motionCleanup = setupSectionMotion(view);
@@ -446,11 +382,7 @@ function showHome() {
     collection.className = "gallery-grid home-live-gallery";
     collection.setAttribute("aria-busy", "true");
     collection.replaceChildren(
-      el(
-        "p",
-        { className: "state loading-state", role: "status" },
-        "Loading current paintings…",
-      ),
+      el("p", { className: "state loading-state", role: "status" }, "Loading current paintings…"),
     );
     note.textContent = "Checking current prices and availability.";
     try {
@@ -459,15 +391,9 @@ function showHome() {
       collection.replaceChildren(
         ...(rows.length
           ? rows.slice(0, 3).map(paintingCard)
-          : [
-              emptyState(
-                "The collection is taking shape.",
-                "The studio hasn’t added any paintings yet.",
-              ),
-            ]),
+          : [emptyState("The collection is taking shape.", "The studio hasn’t added any paintings yet.")]),
       );
-      note.textContent =
-        "Explore the full collection for every original and current availability.";
+      note.textContent = "Explore the full collection for every original and current availability.";
     } catch (error) {
       if (ticket !== loadScreen.ticket) return;
       const expired = error.status === 401;
@@ -477,9 +403,7 @@ function showHome() {
       }
       collection.replaceChildren(
         emptyState(
-          expired
-            ? "Please sign in again."
-            : "We couldn’t load the collection.",
+          expired ? "Please sign in again." : "We couldn’t load the collection.",
           error.message,
           button(
             expired ? "Sign in" : "Retry collection",
@@ -488,8 +412,7 @@ function showHome() {
           ),
         ),
       );
-      note.textContent =
-        "Live prices and availability are currently unavailable.";
+      note.textContent = "Live prices and availability are currently unavailable.";
     } finally {
       collection.removeAttribute("aria-busy");
     }
@@ -505,23 +428,19 @@ function setupSectionMotion(scope) {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         if (!media?.matches && entry.target.animate) {
-          const animation = entry.target.animate(
-            [{ transform: "translateY(24px)" }, { transform: "translateY(0)" }],
-            { duration: 850, easing: "cubic-bezier(.2,.7,.2,1)" },
-          );
+          const animation = entry.target.animate([{ transform: "translateY(24px)" }, { transform: "translateY(0)" }], {
+            duration: 850,
+            easing: "cubic-bezier(.2,.7,.2,1)",
+          });
           animations.add(animation);
-          animation.finished
-            .then(() => animations.delete(animation))
-            .catch(() => {});
+          animation.finished.then(() => animations.delete(animation)).catch(() => {});
         }
         observer.unobserve(entry.target);
       });
     },
     { threshold: 0.08 },
   );
-  scope
-    .querySelectorAll("[data-entrance]")
-    .forEach((node) => observer.observe(node));
+  scope.querySelectorAll("[data-entrance]").forEach((node) => observer.observe(node));
   const stop = () => {
     observer.disconnect();
     animations.forEach((animation) => animation.cancel());
@@ -543,20 +462,13 @@ function setupStageDepth(stage) {
     stage.style.setProperty("--depth-y", "0px");
   };
   const move = (event) => {
-    if (motion?.matches || !fine?.matches || event.pointerType === "touch")
-      return;
+    if (motion?.matches || !fine?.matches || event.pointerType === "touch") return;
     window.cancelAnimationFrame?.(frame);
     frame = requestAnimationFrame(() => {
       const rect = stage.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
-      stage.style.setProperty(
-        "--depth-x",
-        `${((event.clientX - rect.left) / rect.width - 0.5) * 12}px`,
-      );
-      stage.style.setProperty(
-        "--depth-y",
-        `${((event.clientY - rect.top) / rect.height - 0.5) * 9}px`,
-      );
+      stage.style.setProperty("--depth-x", `${((event.clientX - rect.left) / rect.width - 0.5) * 12}px`);
+      stage.style.setProperty("--depth-y", `${((event.clientY - rect.top) / rect.height - 0.5) * 9}px`);
     });
   };
   stage.addEventListener("pointermove", move);
@@ -589,22 +501,14 @@ artworkViewer.addEventListener("keydown", (event) => {
     if (!state.pending) closeArtwork();
   }
   if (event.key !== "Tab") return;
-  const nodes = [
-    ...artworkViewer.querySelectorAll(
-      'button:not(:disabled), a[href], [tabindex="0"]',
-    ),
-  ];
+  const nodes = [...artworkViewer.querySelectorAll('button:not(:disabled), a[href], [tabindex="0"]')];
   const first = nodes[0],
     last = nodes.at(-1);
   if (!first) {
     event.preventDefault();
     return;
   }
-  if (
-    event.shiftKey &&
-    (document.activeElement === first ||
-      !artworkViewer.contains(document.activeElement))
-  ) {
+  if (event.shiftKey && (document.activeElement === first || !artworkViewer.contains(document.activeElement))) {
     event.preventDefault();
     last.focus();
   } else if (!event.shiftKey && document.activeElement === last) {
@@ -620,9 +524,7 @@ function purchasePainting(p) {
     const order = await api("/orders", "POST", { paintingId: p.id });
     closeArtwork();
     await loadScreen();
-    message(
-      `Order #${order.id} placed for ${money(order.price)}. You’ll find it in My orders.`,
-    );
+    message(`Order #${order.id} placed for ${money(order.price)}. You’ll find it in My orders.`);
   });
 }
 function openArtwork(p) {
@@ -647,54 +549,23 @@ function openArtwork(p) {
           })
         : button("Buy painting", () => purchasePainting(p)),
     );
-  else
-    controls.append(
-      el(
-        "p",
-        { className: "unavailable-note" },
-        "This original is currently unavailable.",
-      ),
-    );
+  else controls.append(el("p", { className: "unavailable-note" }, "This original is currently unavailable."));
   const close = button("Close ×", closeArtwork, "viewer-close secondary");
   artworkViewer.replaceChildren(
-    el(
-      "div",
-      { className: "viewer-top" },
-      el("span", {}, "ART STUDIO / A CLOSER LOOK"),
-      close,
-    ),
-    el(
-      "div",
-      { className: "viewer-layout" },
-      el(
-        "div",
-        { className: "viewer-stage" },
-        el("img", { src: p.imageUrl, alt: p.title }),
-      ),
-      el(
-        "div",
-        { className: "viewer-details" },
-        el(
-          "p",
-          { className: "eyebrow" },
-          knownInventory ? `Original / ${p.id}` : "From the collection",
-        ),
+    el("div", { className: "viewer-top" }, el("span", {}, "ART STUDIO / A CLOSER LOOK"), close),
+    el("div", { className: "viewer-layout" },
+      el("div", { className: "viewer-stage" }, el("img", { src: p.imageUrl, alt: p.title })),
+      el("div", { className: "viewer-details" },
+        el("p", { className: "eyebrow" }, knownInventory ? `Original / ${p.id}` : "From the collection"),
         el("h2", { id: "artwork-title" }, p.title),
         el("p", { className: "viewer-artist" }, p.artist),
         el("p", { className: "viewer-description" }, p.description),
         knownInventory
-          ? el(
-              "div",
-              { className: "viewer-price" },
-              el("strong", {}, money(p.price)),
-              badge(p.status),
-            )
+          ? el("div", { className: "viewer-price" }, el("strong", {}, money(p.price)), badge(p.status))
           : null,
         el("p", { className: "viewer-error dialog-error", role: "alert" }),
         controls,
-        el(
-          "p",
-          { className: "hint" },
+        el("p", { className: "hint" },
           knownInventory
             ? "Your order uses the current price and availability."
             : "Sign in to see the live collection.",
@@ -717,12 +588,7 @@ function field(form, label, name, type = "text", options = {}) {
     required: "",
     ...attributes,
   });
-  const wrapper = el(
-    "div",
-    { className: "field" },
-    el("label", { for: id }, label),
-    input,
-  );
+  const wrapper = el("div", { className: "field" }, el("label", { for: id }, label), input);
   if (hint) {
     input.setAttribute("aria-describedby", `${id}-hint`);
     wrapper.append(el("small", { className: "hint", id: `${id}-hint` }, hint));
@@ -732,15 +598,11 @@ function field(form, label, name, type = "text", options = {}) {
 }
 function selectField(form, label, name, choices, value) {
   const id = `field-${++fieldCount}`;
-  const select = el(
-    "select",
-    { name, id, required: "" },
+  const select = el("select", { name, id, required: "" },
     choices.map((choice) => el("option", { value: choice.id }, choice.name)),
   );
   if (value) select.value = value;
-  form.append(
-    el("div", { className: "field" }, el("label", { for: id }, label), select),
-  );
+  form.append(el("div", { className: "field" }, el("label", { for: id }, label), select));
   return select;
 }
 function submit(form, label) {
@@ -773,14 +635,8 @@ function showAuth(signup = false) {
     event.preventDefault();
     const body = Object.fromEntries(new FormData(form));
     action(async () => {
-      state.user = await api(
-        signup ? "/auth/signup" : "/auth/login",
-        "POST",
-        body,
-      );
-      state.screen =
-        state.afterLogin ||
-        (state.user.role === "studio" ? "dashboard" : "gallery");
+      state.user = await api(signup ? "/auth/signup" : "/auth/login", "POST", body);
+      state.screen = state.afterLogin || (state.user.role === "studio" ? "dashboard" : "gallery");
       state.screen = resolveScreen(state.screen);
       state.afterLogin = null;
       await loadScreen();
@@ -793,32 +649,16 @@ function showAuth(signup = false) {
     pottery: "custom pottery",
   }[state.afterLogin];
   view.replaceChildren(
-    el(
-      "section",
-      { className: "auth-layout enter" },
-      el(
-        "div",
-        { className: "auth-story" },
-        el(
-          "p",
-          { className: "eyebrow" },
-          "There’s a little artist in all of us.",
-        ),
+    el("section", { className: "auth-layout enter" },
+      el("div", { className: "auth-story" },
+        el("p", { className: "eyebrow" }, "There’s a little artist in all of us."),
         el("h1", {}, "Make yourself ", el("em", {}, "at home.")),
         framedArtwork(startingCollection[0], "auth-art"),
-        el(
-          "p",
-          { className: "handwritten" },
-          "Good things begin with a little curiosity.",
-        ),
+        el("p", { className: "handwritten" }, "Good things begin with a little curiosity."),
       ),
-      el(
-        "div",
-        { className: "panel auth-panel" },
+      el("div", { className: "panel auth-panel" },
         el("p", { className: "eyebrow" }, "Your place in the studio"),
-        el(
-          "div",
-          { className: "switcher", "aria-label": "Account options" },
+        el("div", { className: "switcher", "aria-label": "Account options" },
           button(
             "Log in",
             () => {
@@ -837,9 +677,7 @@ function showAuth(signup = false) {
           ),
         ),
         el("h2", {}, signup ? "A fresh beginning." : "Welcome back."),
-        el(
-          "p",
-          { className: "muted" },
+        el("p", { className: "muted" },
           destination
             ? `Sign in to explore ${destination}.`
             : signup
@@ -847,9 +685,7 @@ function showAuth(signup = false) {
               : "Your paintings, personal spaces and pottery requests await.",
         ),
         form,
-        el(
-          "p",
-          { className: "hint account-hint" },
+        el("p", { className: "hint account-hint" },
           "Studio members sign in with their studio account. Sign up to collect and commission.",
         ),
       ),
@@ -857,9 +693,7 @@ function showAuth(signup = false) {
   );
 }
 function emptyState(title, detail, recovery) {
-  return el(
-    "div",
-    { className: "state empty-state" },
+  return el("div", { className: "state empty-state" },
     el("span", { className: "state-mark", "aria-hidden": "true" }, "✳"),
     el("h3", {}, title),
     el("p", {}, detail),
@@ -888,9 +722,7 @@ async function loadScreen() {
   }
   updateHeader();
   view.replaceChildren(
-    el(
-      "div",
-      { className: "state loading-state", role: "status" },
+    el("div", { className: "state loading-state", role: "status" },
       el("span", { className: "loading-mark", "aria-hidden": "true" }),
       el("p", {}, "Getting the studio ready…"),
     ),
@@ -901,15 +733,13 @@ async function loadScreen() {
   try {
     const catalogPromise = api("/catalog");
     if (screen === "dashboard") {
-      const [catalog, orders, bookings, pottery, paintings] = await Promise.all(
-        [
-          catalogPromise,
-          api("/orders"),
-          api("/bookings"),
-          api("/pottery"),
-          api("/paintings"),
-        ],
-      );
+      const [catalog, orders, bookings, pottery, paintings] = await Promise.all([
+        catalogPromise,
+        api("/orders"),
+        api("/bookings"),
+        api("/pottery"),
+        api("/paintings"),
+      ]);
       if (ticket !== loadScreen.ticket) return;
       state.catalog = catalog;
       showDashboard({ orders, bookings, pottery, paintings });
@@ -938,29 +768,20 @@ async function loadScreen() {
 loadScreen.ticket = 0;
 function paintingCard(p, index) {
   const studio = state.user.role === "studio";
-  const bottom = el(
-    "div",
-    { className: "card-bottom" },
-    el("span", { className: "price" }, money(p.price)),
-  );
+  const bottom = el("div", { className: "card-bottom" }, el("span", { className: "price" }, money(p.price)));
   if (p.status === "available")
     bottom.append(
       studio
         ? button("Edit painting", () => openPainting(p), "secondary")
         : button("Buy painting", () => purchasePainting(p)),
     );
-  else
-    bottom.append(
-      el("span", { className: "unavailable-note" }, "Currently unavailable"),
-    );
+  else bottom.append(el("span", { className: "unavailable-note" }, "Currently unavailable"));
   return el(
     "article",
     {
       className: `card painting-card enter${index === 0 || index === 7 ? " featured" : ""}${p.status === "sold" ? " is-sold" : ""}`,
     },
-    el(
-      "div",
-      { className: "painting-mount" },
+    el("div", { className: "painting-mount" },
       el("img", {
         src: p.imageUrl,
         alt: p.title,
@@ -968,36 +789,19 @@ function paintingCard(p, index) {
         loading: "lazy",
       }),
       (() => {
-        const look = button(
-          "View artwork ↗",
-          () => openArtwork(p),
-          "artwork-open",
-        );
+        const look = button("View artwork ↗", () => openArtwork(p), "artwork-open");
         look.setAttribute("aria-label", `View artwork: ${p.title}`);
         return look;
       })(),
     ),
-    el(
-      "div",
-      { className: "card-body" },
-      el(
-        "div",
-        { className: "work-meta" },
-        el(
-          "span",
-          {},
-          `WORK / ${p.id.startsWith("p-0") ? p.id.slice(2) : "STUDIO"}`,
-        ),
+    el("div", { className: "card-body" },
+      el("div", { className: "work-meta" },
+        el("span", {}, `WORK / ${p.id.startsWith("p-0") ? p.id.slice(2) : "STUDIO"}`),
         badge(p.status),
       ),
       el("h2", {}, p.title),
       el("p", { className: "artist" }, p.artist),
-      el(
-        "details",
-        { className: "art-notes" },
-        el("summary", {}, "About this work"),
-        el("p", {}, p.description),
-      ),
+      el("details", { className: "art-notes" }, el("summary", {}, "About this work"), el("p", {}, p.description)),
       bottom,
     ),
   );
@@ -1026,19 +830,14 @@ function showGallery(rows) {
     );
     count.textContent = `${filtered.length} of ${rows.length} works · Prices in INR`;
     [...chips.children].forEach((chip) =>
-      chip.setAttribute(
-        "aria-pressed",
-        String(chip.dataset.filter === state.galleryStatus),
-      ),
+      chip.setAttribute("aria-pressed", String(chip.dataset.filter === state.galleryStatus)),
     );
     results.replaceChildren(
       ...(filtered.length
         ? filtered.map(paintingCard)
         : [
             emptyState(
-              rows.length
-                ? "No works match just yet."
-                : "A blank canvas, for now.",
+              rows.length ? "No works match just yet." : "A blank canvas, for now.",
               rows.length
                 ? "Try another title, artist or availability filter."
                 : "The studio hasn’t added any paintings yet.",
@@ -1078,20 +877,11 @@ function showGallery(rows) {
     state.gallerySearch = search.value;
     draw();
   });
-  const toolbar = el(
-    "div",
-    { className: "gallery-toolbar" },
+  const toolbar = el("div", { className: "gallery-toolbar" },
     chips,
-    el(
-      "label",
-      { className: "search-field" },
-      el("span", { className: "sr-only" }, "Search paintings"),
-      search,
-    ),
+    el("label", { className: "search-field" }, el("span", { className: "sr-only" }, "Search paintings"), search),
   );
-  const top = el(
-    "div",
-    { className: "page-heading" },
+  const top = el("div", { className: "page-heading" },
     heading(
       studio ? "The collection, in your care." : "Find a piece of yourself.",
       studio
@@ -1108,15 +898,8 @@ function showGallery(rows) {
 }
 function openEditor(title, form) {
   editor.replaceChildren(
-    el(
-      "div",
-      { className: "dialog-header" },
-      el(
-        "div",
-        {},
-        el("p", { className: "eyebrow" }, "At the workbench"),
-        el("h2", { id: "editor-title" }, title),
-      ),
+    el("div", { className: "dialog-header" },
+      el("div", {}, el("p", { className: "eyebrow" }, "At the workbench"), el("h2", { id: "editor-title" }, title)),
       button("Close", () => editor.close(), "text-button"),
     ),
     el("p", { className: "dialog-error", role: "alert" }),
@@ -1126,10 +909,8 @@ function openEditor(title, form) {
 }
 function openPainting(p) {
   const form = el("form");
-  field(form, "Title", "title", "text", { maxlength: 300 }).value =
-    p?.title || "";
-  field(form, "Artist", "artist", "text", { maxlength: 100 }).value =
-    p?.artist || "";
+  field(form, "Title", "title", "text", { maxlength: 300 }).value = p?.title || "";
+  field(form, "Artist", "artist", "text", { maxlength: 100 }).value = p?.artist || "";
   field(form, "Description", "description", "textarea", {
     maxlength: 3000,
   }).value = p?.description || "";
@@ -1154,11 +935,7 @@ function openPainting(p) {
     const body = Object.fromEntries(new FormData(form));
     body.price = Number(body.price);
     action(async () => {
-      await api(
-        p ? `/paintings/${p.id}` : "/paintings",
-        p ? "PUT" : "POST",
-        body,
-      );
+      await api(p ? `/paintings/${p.id}` : "/paintings", p ? "PUT" : "POST", body);
       editor.close();
       await loadScreen();
       message(p ? "Painting saved." : "Painting added to the collection.");
@@ -1200,34 +977,17 @@ function decisionButtons(kind, row, statuses) {
   );
 }
 function recordTable(rows, columns, caption) {
-  return el(
-    "div",
-    {
-      className: "table-wrap",
-      tabindex: "0",
-      role: "region",
-      "aria-label": caption,
-    },
-    el(
-      "table",
-      {},
+  return el("div", { className: "table-wrap", tabindex: "0", role: "region", "aria-label": caption },
+    el("table", {},
       el("caption", { className: "sr-only" }, caption),
-      el(
-        "thead",
-        {},
-        el(
-          "tr",
-          {},
+      el("thead", {},
+        el("tr", {},
           columns.map(([label]) => el("th", { scope: "col" }, label)),
         ),
       ),
-      el(
-        "tbody",
-        {},
+      el("tbody", {},
         rows.map((row) =>
-          el(
-            "tr",
-            {},
+          el("tr", {},
             columns.map(([, content]) => el("td", {}, content(row))),
           ),
         ),
@@ -1241,25 +1001,16 @@ function filteredRecords(kind, rows, render, emptyText, statuses) {
   const count = el("p", { className: "result-count", role: "status" });
   const search = el("input", {
     type: "search",
-    placeholder:
-      state.user.role === "studio"
-        ? "Search requests or customers"
-        : "Search your records",
+    placeholder: state.user.role === "studio" ? "Search requests or customers" : "Search your records",
     maxlength: 120,
   });
   search.value = filters.query;
-  const select = el(
-    "select",
-    {},
+  const select = el("select", {},
     el("option", { value: "all" }, "All statuses"),
-    statuses.map((status) =>
-      el("option", { value: status }, capitalize(status)),
-    ),
+    statuses.map((status) => el("option", { value: status }, capitalize(status))),
   );
   select.value = filters.status;
-  const bar = el(
-    "div",
-    { className: "record-filters" },
+  const bar = el("div", { className: "record-filters" },
     el("label", {}, "Search", search),
     el("label", {}, "Status", select),
   );
@@ -1275,9 +1026,7 @@ function filteredRecords(kind, rows, render, emptyText, statuses) {
       filtered.length
         ? render(filtered)
         : emptyState(
-            rows.length
-              ? "Nothing matches this view."
-              : "A little space for what comes next.",
+            rows.length ? "Nothing matches this view." : "A little space for what comes next.",
             rows.length ? "Try a different search or status." : emptyText,
             rows.length
               ? button(
@@ -1307,9 +1056,7 @@ function filteredRecords(kind, rows, render, emptyText, statuses) {
   return el("div", { className: "records-section" }, bar, count, results);
 }
 function customerName(row) {
-  return el(
-    "div",
-    {},
+  return el("div", {},
     el("strong", {}, row.customerName),
     el("small", { className: "cell-detail" }, row.customerEmail),
   );
@@ -1324,15 +1071,9 @@ function showOrders(rows) {
             [
               "Order",
               (row) =>
-                el(
-                  "div",
-                  {},
+                el("div", {},
                   `#${row.id} · ${row.title}`,
-                  el(
-                    "small",
-                    { className: "cell-detail" },
-                    dateTime(row.createdAt),
-                  ),
+                  el("small", { className: "cell-detail" }, dateTime(row.createdAt)),
                 ),
             ],
             ["Customer", customerName],
@@ -1342,42 +1083,23 @@ function showOrders(rows) {
           ],
           "All painting orders",
         )
-      : el(
-          "div",
-          { className: "records-list" },
+      : el("div", { className: "records-list" },
           filtered.map((row) =>
-            el(
-              "article",
-              { className: "record order-record" },
+            el("article", { className: "record order-record" },
               el("img", {
                 src: row.imageUrl,
                 alt: row.title,
                 className: "order-thumbnail",
                 loading: "lazy",
               }),
-              el(
-                "div",
-                { className: "record-content" },
-                el(
-                  "div",
-                  { className: "work-meta" },
-                  el("span", {}, `ORDER / ${row.id}`),
-                  badge(row.status),
-                ),
+              el("div", { className: "record-content" },
+                el("div", { className: "work-meta" }, el("span", {}, `ORDER / ${row.id}`), badge(row.status)),
                 el("h3", {}, row.title),
-                el(
-                  "p",
-                  { className: "record-detail" },
-                  `Placed ${dateTime(row.createdAt)} (Kolkata)`,
-                ),
+                el("p", { className: "record-detail" }, `Placed ${dateTime(row.createdAt)} (Kolkata)`),
                 el("p", { className: "price" }, money(row.price)),
               ),
               row.status === "placed"
-                ? el(
-                    "div",
-                    { className: "actions" },
-                    cancelButton("orders", row, "Cancel order"),
-                  )
+                ? el("div", { className: "actions" }, cancelButton("orders", row, "Cancel order"))
                 : null,
             ),
           ),
@@ -1388,19 +1110,14 @@ function showOrders(rows) {
       "Placed orders can be cancelled, returning the painting to the collection.",
       studio ? "Studio / Orders" : "Your studio / Orders",
     ),
-    filteredRecords(
-      "orders",
-      rows,
-      render,
-      "Your painting orders will appear here after you buy an available work.",
-      ["placed", "cancelled"],
-    ),
+    filteredRecords("orders", rows, render, "Your painting orders will appear here after you buy an available work.", [
+      "placed",
+      "cancelled",
+    ]),
   );
 }
 function addDays(date, days) {
-  return new Date(Date.parse(`${date}T00:00:00Z`) + days * 86400000)
-    .toISOString()
-    .slice(0, 10);
+  return new Date(Date.parse(`${date}T00:00:00Z`) + days * 86400000).toISOString().slice(0, 10);
 }
 function bookingForm() {
   const form = el("form");
@@ -1422,23 +1139,15 @@ function bookingForm() {
   });
   const quote = el("strong", {}, "Add your wall size");
   form.append(
-    el(
-      "div",
-      { className: "form-quote" },
+    el("div", { className: "form-quote" },
       el("span", {}, "Your wall, estimated"),
       quote,
-      el(
-        "small",
-        {},
-        `${money(state.catalog.wallRate)} per sq ft · Your total is confirmed when you request.`,
-      ),
+      el("small", {}, `${money(state.catalog.wallRate)} per sq ft · Your total is confirmed when you request.`),
     ),
   );
   size.addEventListener("input", () => {
     quote.textContent =
-      size.value &&
-      Number.isFinite(Number(size.value)) &&
-      Number(size.value) > 0
+      size.value && Number.isFinite(Number(size.value)) && Number(size.value) > 0
         ? money(Number(size.value) * state.catalog.wallRate)
         : "Add your wall size";
   });
@@ -1469,9 +1178,7 @@ function bookingRecords(rows, studio) {
               [
                 "Wall & address",
                 (row) =>
-                  el(
-                    "div",
-                    {},
+                  el("div", {},
                     `${row.wallSize} sq ft · ${money(row.total)}`,
                     el("small", { className: "cell-detail" }, row.address),
                   ),
@@ -1481,54 +1188,28 @@ function bookingRecords(rows, studio) {
                 "Decision",
                 (row) =>
                   row.status === "requested"
-                    ? el(
-                        "div",
-                        { className: "actions" },
-                        decisionButtons("bookings", row, [
-                          "confirmed",
-                          "declined",
-                        ]),
-                      )
+                    ? el("div", { className: "actions" }, decisionButtons("bookings", row, ["confirmed", "declined"]))
                     : "No action needed",
               ],
             ],
             "Wall-painting bookings",
           )
-        : el(
-            "div",
-            { className: "records-list" },
+        : el("div", { className: "records-list" },
             filtered.map((row) => {
               const eligible = ["requested", "confirmed"].includes(row.status);
-              return el(
-                "article",
-                { className: "record" },
-                el(
-                  "div",
-                  { className: "work-meta" },
-                  el("span", {}, `WALL / ${row.id}`),
-                  badge(row.status),
-                ),
+              return el("article", { className: "record" },
+                el("div", { className: "work-meta" }, el("span", {}, `WALL / ${row.id}`), badge(row.status)),
                 el("h3", {}, row.date),
                 el("p", { className: "record-detail" }, row.address),
-                el(
-                  "p",
-                  { className: "record-detail" },
-                  `${row.wallSize} sq ft × ${money(row.rate)}/sq ft`,
-                ),
+                el("p", { className: "record-detail" }, `${row.wallSize} sq ft × ${money(row.rate)}/sq ft`),
                 el("p", { className: "price" }, money(row.total)),
                 eligible
-                  ? el(
-                      "p",
-                      { className: "hint" },
+                  ? el("p", { className: "hint" },
                       `Cancellation deadline: ${addDays(row.date, -3)}, 11:59:59 PM Kolkata time.`,
                     )
                   : null,
                 eligible && state.catalog.today <= addDays(row.date, -3)
-                  ? el(
-                      "div",
-                      { className: "actions" },
-                      cancelButton("bookings", row, "Cancel booking"),
-                    )
+                  ? el("div", { className: "actions" }, cancelButton("bookings", row, "Cancel booking"))
                   : null,
               );
             }),
@@ -1543,16 +1224,11 @@ function showBookings(rows) {
     "Requested and confirmed dates are reserved. Cancel through the day three days before your booking, in Kolkata time.";
   const history = bookingRecords(rows, studio);
   if (studio) {
-    view.replaceChildren(
-      heading("Wall bookings.", policy, "Studio / Commissions"),
-      history,
-    );
+    view.replaceChildren(heading("Wall bookings.", policy, "Studio / Commissions"), history);
     return;
   }
   view.replaceChildren(
-    el(
-      "div",
-      { className: "service-intro indigo-intro enter" },
+    el("div", { className: "service-intro indigo-intro enter" },
       heading(
         "Your walls are a blank canvas.",
         "Start with a date, a wall and a little imagination. We’ll receive your request and confirm or decline it.",
@@ -1560,23 +1236,15 @@ function showBookings(rows) {
       ),
       el("div", { className: "service-wall-study" }, makeWallStudy()),
     ),
-    el(
-      "div",
-      { className: "two-column" },
-      el(
-        "section",
-        { className: "panel commission-panel", id: "wall-request" },
+    el("div", { className: "two-column" },
+      el("section", { className: "panel commission-panel", id: "wall-request" },
         el("p", { className: "eyebrow" }, "The brief"),
         el("h2", {}, "Tell us about your wall."),
         bookingForm(),
         el("p", { className: "hint policy-note" }, policy),
       ),
-      el(
-        "section",
-        {},
-        el(
-          "div",
-          { className: "section-heading compact" },
+      el("section", {},
+        el("div", { className: "section-heading compact" },
           el("h2", {}, "Your wall requests"),
           el("span", { className: "handwritten" }, "In the making."),
         ),
@@ -1587,13 +1255,7 @@ function showBookings(rows) {
 }
 function potteryForm(row) {
   const form = el("form");
-  const item = selectField(
-    form,
-    "Choose a form",
-    "itemId",
-    state.catalog.items,
-    row?.itemId,
-  );
+  const item = selectField(form, "Choose a form", "itemId", state.catalog.items, row?.itemId);
   const glaze = selectField(
     form,
     "Choose a glaze",
@@ -1619,35 +1281,22 @@ function potteryForm(row) {
   function updateSummary() {
     clayPreview.replaceChildren(
       clayObject(item.value, glaze.value),
-      el(
-        "p",
-        { className: "hint" },
-        "Your form & glaze · illustrative preview",
-      ),
+      el("p", { className: "hint" }, "Your form & glaze · illustrative preview"),
     );
     summary.textContent = `${quantity.value || "—"} × ${item.selectedOptions[0]?.textContent || "Choose an item"} · ${glaze.selectedOptions[0]?.textContent || "Choose a glaze"}`;
   }
-  [item, glaze, quantity].forEach((input) =>
-    input.addEventListener("input", updateSummary),
-  );
+  [item, glaze, quantity].forEach((input) => input.addEventListener("input", updateSummary));
   glaze.addEventListener("input", () => {
     state.potteryGlaze = glaze.value;
     const largePreview = view.querySelector(".commission-clay");
-    if (largePreview)
-      largePreview.replaceChildren(clayObject("i-02", glaze.value));
+    if (largePreview) largePreview.replaceChildren(clayObject("i-02", glaze.value));
   });
   updateSummary();
   form.append(
-    el(
-      "div",
-      { className: "form-quote clay-quote" },
+    el("div", { className: "form-quote clay-quote" },
       el("span", {}, "Your pottery brief"),
       summary,
-      el(
-        "small",
-        {},
-        "You can edit or cancel while the request is still requested.",
-      ),
+      el("small", {}, "You can edit or cancel while the request is still requested."),
     ),
   );
   submit(form, row ? "Save request" : "Request pottery");
@@ -1656,18 +1305,10 @@ function potteryForm(row) {
     const body = Object.fromEntries(new FormData(form));
     body.quantity = Number(body.quantity);
     action(async () => {
-      await api(
-        row ? `/pottery/${row.id}` : "/pottery",
-        row ? "PUT" : "POST",
-        body,
-      );
+      await api(row ? `/pottery/${row.id}` : "/pottery", row ? "PUT" : "POST", body);
       if (row) editor.close();
       await loadScreen();
-      message(
-        row
-          ? "Pottery request updated."
-          : "Your pottery request is with the studio.",
-      );
+      message(row ? "Pottery request updated." : "Your pottery request is with the studio.");
     });
   });
   return form;
@@ -1686,15 +1327,9 @@ function potteryRecords(rows, studio) {
               [
                 "Details",
                 (row) =>
-                  el(
-                    "div",
-                    {},
+                  el("div", {},
                     `${row.quantity} × ${row.glaze}`,
-                    el(
-                      "small",
-                      { className: "cell-detail" },
-                      `Needed by ${row.neededBy}`,
-                    ),
+                    el("small", { className: "cell-detail" }, `Needed by ${row.neededBy}`),
                   ),
               ],
               ["Status", (row) => badge(row.status)],
@@ -1702,54 +1337,24 @@ function potteryRecords(rows, studio) {
                 "Decision",
                 (row) =>
                   row.status === "requested"
-                    ? el(
-                        "div",
-                        { className: "actions" },
-                        decisionButtons("pottery", row, [
-                          "accepted",
-                          "declined",
-                        ]),
-                      )
+                    ? el("div", { className: "actions" }, decisionButtons("pottery", row, ["accepted", "declined"]))
                     : "No action needed",
               ],
             ],
             "Custom pottery requests",
           )
-        : el(
-            "div",
-            { className: "records-list" },
+        : el("div", { className: "records-list" },
             filtered.map((row) =>
-              el(
-                "article",
-                { className: "record" },
-                el(
-                  "div",
-                  { className: "work-meta" },
-                  el("span", {}, `CLAY / ${row.id}`),
-                  badge(row.status),
-                ),
+              el("article", { className: "record" },
+                el("div", { className: "work-meta" }, el("span", {}, `CLAY / ${row.id}`), badge(row.status)),
                 el("h3", {}, row.item),
-                el(
-                  "p",
-                  { className: "record-detail" },
-                  `${row.glaze} · Quantity ${row.quantity}`,
-                ),
-                el(
-                  "p",
-                  { className: "record-detail" },
-                  `Needed by ${row.neededBy}`,
-                ),
+                el("p", { className: "record-detail" }, `${row.glaze} · Quantity ${row.quantity}`),
+                el("p", { className: "record-detail" }, `Needed by ${row.neededBy}`),
                 row.status === "requested"
-                  ? el(
-                      "div",
-                      { className: "actions" },
+                  ? el("div", { className: "actions" },
                       button(
                         "Edit request",
-                        () =>
-                          openEditor(
-                            "Refine your pottery request",
-                            potteryForm(row),
-                          ),
+                        () => openEditor("Refine your pottery request", potteryForm(row)),
                         "secondary",
                       ),
                       cancelButton("pottery", row, "Cancel request"),
@@ -1777,42 +1382,24 @@ function showPottery(rows) {
     return;
   }
   view.replaceChildren(
-    el(
-      "div",
-      { className: "service-intro clay-intro enter" },
+    el("div", { className: "service-intro clay-intro enter" },
       heading(
         "Made by hand. Imagined by you.",
         "Choose a form, a glaze and a date. A small idea can become something you use every day.",
         "03 / A commission in clay",
       ),
-      el(
-        "div",
-        { className: "commission-clay" },
-        clayObject("i-02", state.potteryGlaze),
-      ),
+      el("div", { className: "commission-clay" }, clayObject("i-02", state.potteryGlaze)),
     ),
-    el(
-      "div",
-      { className: "two-column" },
-      el(
-        "section",
-        { className: "panel commission-panel", id: "pottery-request" },
+    el("div", { className: "two-column" },
+      el("section", { className: "panel commission-panel", id: "pottery-request" },
         el("p", { className: "eyebrow" }, "The brief"),
         el("h2", {}, "Shape your request."),
         potteryForm(),
       ),
-      el(
-        "section",
-        {},
-        el(
-          "div",
-          { className: "section-heading compact" },
+      el("section", {},
+        el("div", { className: "section-heading compact" },
           el("h2", {}, "Your pottery requests"),
-          el(
-            "span",
-            { className: "handwritten" },
-            "Little things, made personal.",
-          ),
+          el("span", { className: "handwritten" }, "Little things, made personal."),
         ),
         history,
       ),
@@ -1820,25 +1407,13 @@ function showPottery(rows) {
   );
 }
 function showDashboard(data) {
-  const requestedWalls = data.bookings.filter(
-    (row) => row.status === "requested",
-  );
-  const requestedPottery = data.pottery.filter(
-    (row) => row.status === "requested",
-  );
+  const requestedWalls = data.bookings.filter((row) => row.status === "requested");
+  const requestedPottery = data.pottery.filter((row) => row.status === "requested");
   const metrics = [
-    [
-      data.paintings.filter((row) => row.status === "available").length,
-      "Available paintings",
-      "gallery",
-    ],
+    [data.paintings.filter((row) => row.status === "available").length, "Available paintings", "gallery"],
     [requestedWalls.length, "Wall requests to review", "bookings"],
     [requestedPottery.length, "Pottery requests to review", "pottery"],
-    [
-      data.orders.filter((row) => row.status === "placed").length,
-      "Placed orders",
-      "orders",
-    ],
+    [data.orders.filter((row) => row.status === "placed").length, "Placed orders", "orders"],
   ];
   view.replaceChildren(
     heading(
@@ -1846,31 +1421,17 @@ function showDashboard(data) {
       "A calm place to look after the collection and the work in progress.",
       "Studio / Overview",
     ),
-    el(
-      "div",
-      { className: "dashboard-metrics" },
+    el("div", { className: "dashboard-metrics" },
       metrics.map(([count, label, screen]) => {
         const metric = button("", () => openScreen(screen), "metric");
-        metric.append(
-          el("strong", {}, count),
-          el("span", {}, label),
-          el("small", {}, "Open view ↗"),
-        );
+        metric.append(el("strong", {}, count), el("span", {}, label), el("small", {}, "Open view ↗"));
         return metric;
       }),
     ),
-    el(
-      "section",
-      { className: "dashboard-section" },
-      el(
-        "div",
-        { className: "section-heading compact" },
+    el("section", { className: "dashboard-section" },
+      el("div", { className: "section-heading compact" },
         el("h2", {}, "Wall requests to review"),
-        arrowButton(
-          "All wall bookings",
-          () => openScreen("bookings"),
-          "text-button",
-        ),
+        arrowButton("All wall bookings", () => openScreen("bookings"), "text-button"),
       ),
       requestedWalls.length
         ? recordTable(
@@ -1882,32 +1443,17 @@ function showDashboard(data) {
               [
                 "Decision",
                 (row) =>
-                  el(
-                    "div",
-                    { className: "actions" },
-                    decisionButtons("bookings", row, ["confirmed", "declined"]),
-                  ),
+                  el("div", { className: "actions" }, decisionButtons("bookings", row, ["confirmed", "declined"])),
               ],
             ],
             "Requested wall bookings",
           )
-        : emptyState(
-            "The wall workbench is clear.",
-            "No wall requests are waiting for a decision.",
-          ),
+        : emptyState("The wall workbench is clear.", "No wall requests are waiting for a decision."),
     ),
-    el(
-      "section",
-      { className: "dashboard-section" },
-      el(
-        "div",
-        { className: "section-heading compact" },
+    el("section", { className: "dashboard-section" },
+      el("div", { className: "section-heading compact" },
         el("h2", {}, "Pottery requests to review"),
-        arrowButton(
-          "All pottery requests",
-          () => openScreen("pottery"),
-          "text-button",
-        ),
+        arrowButton("All pottery requests", () => openScreen("pottery"), "text-button"),
       ),
       requestedPottery.length
         ? recordTable(
@@ -1918,53 +1464,27 @@ function showDashboard(data) {
               ["Needed by", (row) => row.neededBy],
               [
                 "Decision",
-                (row) =>
-                  el(
-                    "div",
-                    { className: "actions" },
-                    decisionButtons("pottery", row, ["accepted", "declined"]),
-                  ),
+                (row) => el("div", { className: "actions" }, decisionButtons("pottery", row, ["accepted", "declined"])),
               ],
             ],
             "Requested pottery",
           )
-        : emptyState(
-            "The clay workbench is clear.",
-            "No pottery requests are waiting for a decision.",
-          ),
+        : emptyState("The clay workbench is clear.", "No pottery requests are waiting for a decision."),
     ),
   );
 }
-const routeNames = new Set([
-  "home",
-  "auth",
-  "gallery",
-  "orders",
-  "bookings",
-  "pottery",
-  "dashboard",
-]);
+const routeNames = new Set(["home", "auth", "gallery", "orders", "bookings", "pottery", "dashboard"]);
 function readRoute() {
   const name = location.hash.replace(/^#\/?/, "");
-  return name === "collection"
-    ? "gallery"
-    : routeNames.has(name)
-      ? name
-      : "home";
+  return name === "collection" ? "gallery" : routeNames.has(name) ? name : "home";
 }
 function resolveScreen(screen) {
-  return screen === "dashboard" && state.user && state.user.role !== "studio"
-    ? "gallery"
-    : screen;
+  return screen === "dashboard" && state.user && state.user.role !== "studio" ? "gallery" : screen;
 }
 function writeRoute(screen, replace = false) {
   const hash = screen === "home" ? "" : `#${screen}`;
   if (location.hash !== hash)
-    history[replace ? "replaceState" : "pushState"](
-      null,
-      "",
-      location.pathname + location.search + hash,
-    );
+    history[replace ? "replaceState" : "pushState"](null, "", location.pathname + location.search + hash);
 }
 function onHistory() {
   if (state.sessionLoading) return;
@@ -1985,14 +1505,10 @@ document.querySelector(".skip-link").addEventListener("click", (event) => {
 });
 document
   .querySelectorAll("footer [data-page]")
-  .forEach((node) =>
-    node.addEventListener("click", () => openScreen(node.dataset.page)),
-  );
+  .forEach((node) => node.addEventListener("click", () => openScreen(node.dataset.page)));
 async function start() {
   const requested = readRoute();
-  const anchor = ["#personal-services", "#main"].includes(location.hash)
-    ? location.hash.slice(1)
-    : null;
+  const anchor = ["#personal-services", "#main"].includes(location.hash) ? location.hash.slice(1) : null;
   state.sessionLoading = true;
   updateHeader();
   try {
@@ -2011,9 +1527,6 @@ async function start() {
   if (requested === "home") showHome();
   else if (requested === "auth") showAuth();
   else openScreen(requested, false);
-  if (anchor)
-    requestAnimationFrame(() =>
-      document.getElementById(anchor)?.scrollIntoView({ behavior: "instant" }),
-    );
+  if (anchor) requestAnimationFrame(() => document.getElementById(anchor)?.scrollIntoView({ behavior: "instant" }));
 }
 start();
