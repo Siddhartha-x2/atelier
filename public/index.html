@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Art Studio — The Living Atelier. Original paintings. Walls with personality. Pottery made personal."
+    />
+    <title>Art Studio</title>
+    <link
+      rel="icon"
+      href="./illustrations/studio-mark.svg"
+      type="image/svg+xml"
+    />
+    <!-- Apply the saved theme before styles load, so the page does not flash. -->
+    <script src="./theme.js"></script>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./atelier.css" />
+    <link rel="stylesheet" href="./interactions.css" />
+    <script src="./app.js" defer=""></script>
+    <link rel="stylesheet" href="./editorial.css" />
+  </head>
+  <body data-screen="home">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <button
+        class="brand"
+        id="brand-home"
+        type="button"
+        aria-label="Art Studio home"
+      >
+        <span class="brand-mark" aria-hidden="true">a<span>✳</span></span
+        ><span>Art <em>Studio</em><small>The Living Atelier</small></span>
+      </button>
+      <div class="header-actions">
+        <button
+          id="theme-toggle"
+          class="theme-toggle secondary"
+          type="button"
+          aria-label="Switch to light mode"
+        >
+          <svg
+            class="theme-icon theme-icon-sun"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="4"></circle>
+            <path
+              d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"
+            ></path>
+          </svg>
+          <svg
+            class="theme-icon theme-icon-moon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            aria-hidden="true"
+          >
+            <path
+              d="M20.6 14.1A8.7 8.7 0 0 1 9.9 3.4 8.8 8.8 0 1 0 20.6 14.1Z"
+            ></path>
+          </svg>
+          <span id="theme-label">Light mode</span>
+        </button>
+        <div id="account" class="account"></div>
+      </div>
+    </header>
+    <nav id="navigation" aria-label="Main navigation"></nav>
+    <div
+      id="notice"
+      class="notice"
+      role="status"
+      aria-live="polite"
+      hidden=""
+    ></div>
+    <main id="main" tabindex="-1">
+      <div id="view" aria-live="polite">
+        <section class="atelier-hero">
+          <div class="hero-copy">
+            <p class="eyebrow">
+              <span class="living-dot" aria-hidden="true"></span>ART STUDIO /
+              THE LIVING ATELIER
+            </p>
+            <h1>
+              <span>Make room for</span> <span>a little</span>
+              <em class="hero-extraordinary">extraordinary.</em>
+            </h1>
+            <p class="hero-description">
+              Original paintings. Walls with personality. Pottery made personal.
+            </p>
+            <div class="hero-actions">
+              <button type="button" data-page="gallery">
+                Explore paintings ↗
+              </button>
+              <a href="#personal-services" class="commission-link"
+                >Create something personal <span aria-hidden="true">↘</span></a
+              >
+            </div>
+            <div class="hero-footnote">
+              <span class="handwritten">For the spaces we call our own.</span
+              ><span class="hero-scroll" aria-hidden="true"
+                >PAINT · SPACE · CLAY</span
+              >
+            </div>
+            <p class="hero-margin-note">
+              <span aria-hidden="true">↘</span> A place for art.<br />A little
+              space for you.
+            </p>
+          </div>
+          <div
+            class="artwork-stage"
+            aria-label="Indian paintings arranged in a contemporary studio"
+          >
+            <div class="stage-window" aria-hidden="true"></div>
+            <p class="hero-art-label">
+              <span>FROM THE COLLECTION / P-006</span
+              ><strong>Gond Forest Spirits</strong><small>Mohan Markam</small>
+            </p>
+            <span class="stage-coordinate"
+              >PAINTINGS / SPACES / EVERYDAY OBJECTS</span
+            >
+            <figure class="framed-work hero-frame frame-three">
+              <div class="frame-picture">
+                <img
+                  src="./images/p-005.jpg"
+                  alt="Kalamkari Tree of Life"
+                  draggable="false"
+                />
+              </div>
+              <figcaption>Kalamkari Tree of Life — Padma Reddy</figcaption>
+            </figure>
+            <figure class="framed-work hero-frame frame-one">
+              <div class="frame-picture">
+                <img
+                  src="./images/p-006.jpg"
+                  alt="Gond Forest Spirits"
+                  draggable="false"
+                />
+              </div>
+              <figcaption>Gond Forest Spirits — Mohan Markam</figcaption>
+            </figure>
+            <figure class="framed-work hero-frame frame-two">
+              <div class="frame-picture">
+                <img
+                  src="./images/p-003.jpg"
+                  alt="Tanjore Lakshmi with Gold Leaf"
+                  draggable="false"
+                />
+              </div>
+              <figcaption>
+                Tanjore Lakshmi with Gold Leaf — Revathi Iyer
+              </figcaption>
+            </figure>
+            <div class="stage-plinth" aria-hidden="true">
+              <div class="clay-object glaze-g-05">
+                <svg viewBox="0 0 360 330">
+                  <ellipse
+                    cx="182"
+                    cy="294"
+                    rx="103"
+                    ry="11"
+                    class="clay-shadow"
+                  ></ellipse>
+                  <g class="clay-form">
+                    <path d="M105 110h150l-17 140q-58 24-116 0Z"></path>
+                    <ellipse
+                      cx="180"
+                      cy="110"
+                      rx="75"
+                      ry="15"
+                      class="clay-mouth"
+                    ></ellipse>
+                    <path
+                      d="M128 145q48 14 104 0m-100 30q48 13 96 0m-92 30q44 12 88 0"
+                      class="clay-lines"
+                    ></path>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <span class="handwritten stage-note">A little more feeling.</span
+            ><span class="stage-index" aria-hidden="true"
+              >STUDIO NOTES / 01</span
+            >
+            <span class="studio-stamp" aria-hidden="true"
+              >MADE TO<br /><strong>LIVE</strong><br />WITH</span
+            ><span class="studio-pin" aria-hidden="true"></span>
+          </div>
+        </section>
+        <div class="disciplines">
+          <button type="button" class="discipline" data-page="gallery">
+            <span class="discipline-number">01</span
+            ><span
+              ><strong>For your walls</strong
+              ><small>Original paintings</small></span
+            ><span class="discipline-arrow" aria-hidden="true">↗</span>
+          </button>
+          <button type="button" class="discipline" data-page="bookings">
+            <span class="discipline-number">02</span
+            ><span
+              ><strong>For your space</strong><small>Wall painting</small></span
+            ><span class="discipline-arrow" aria-hidden="true">↗</span>
+          </button>
+          <button type="button" class="discipline" data-page="pottery">
+            <span class="discipline-number">03</span
+            ><span
+              ><strong>For your everyday</strong
+              ><small>Personal pottery</small></span
+            ><span class="discipline-arrow" aria-hidden="true">↗</span>
+          </button>
+        </div>
+        <section class="home-collection" data-entrance="">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">01 / The collection</p>
+              <h2>Some things deserve<br />a <em>closer look.</em></h2>
+            </div>
+            <div class="section-aside">
+              <p>
+                Stories in pigment. Traditions in every line. Find a work that
+                stays with you.
+              </p>
+              <button type="button" class="text-button" data-page="gallery">
+                View the collection ↗
+              </button>
+            </div>
+          </div>
+          <div class="preview-gallery" data-home-collection="">
+            <figure class="framed-work preview-work preview-work-1">
+              <div class="frame-picture">
+                <img
+                  src="./images/p-001.jpg"
+                  alt="Madhubani Peacock Garden"
+                  loading="lazy"
+                /><button
+                  type="button"
+                  class="preview-open"
+                  data-artwork="0"
+                  aria-label="View Madhubani Peacock Garden"
+                >
+                  Spend a moment ↗
+                </button>
+              </div>
+              <figcaption>
+                <span class="exhibition-number">ON VIEW / 01</span>
+                <span>Madhubani Peacock Garden</span><small>Meera Kumari</small>
+              </figcaption>
+            </figure>
+            <figure class="framed-work preview-work preview-work-2">
+              <div class="frame-picture">
+                <img
+                  src="./images/p-003.jpg"
+                  alt="Tanjore Lakshmi with Gold Leaf"
+                  loading="lazy"
+                /><button
+                  type="button"
+                  class="preview-open"
+                  data-artwork="1"
+                  aria-label="View Tanjore Lakshmi with Gold Leaf"
+                >
+                  Spend a moment ↗
+                </button>
+              </div>
+              <figcaption>
+                <span class="exhibition-number">ON VIEW / 02</span>
+                <span>Tanjore Lakshmi with Gold Leaf</span
+                ><small>Revathi Iyer</small>
+              </figcaption>
+            </figure>
+            <figure class="framed-work preview-work preview-work-3">
+              <div class="frame-picture">
+                <img
+                  src="./images/p-005.jpg"
+                  alt="Kalamkari Tree of Life"
+                  loading="lazy"
+                /><button
+                  type="button"
+                  class="preview-open"
+                  data-artwork="2"
+                  aria-label="View Kalamkari Tree of Life"
+                >
+                  Spend a moment ↗
+                </button>
+              </div>
+              <figcaption>
+                <span class="exhibition-number">ON VIEW / 03</span>
+                <span>Kalamkari Tree of Life</span><small>Padma Reddy</small>
+              </figcaption>
+            </figure>
+            <span class="collection-scribble handwritten" aria-hidden="true"
+              >This one could be yours. ↗</span
+            >
+          </div>
+          <div class="collection-colophon">
+            <p data-home-inventory-note="">
+              Selected works from the collection. Sign in for current prices and
+              availability.
+            </p>
+            <span class="handwritten">Take your time. Art is patient.</span>
+          </div>
+        </section>
+        <section class="wall-chapter" id="personal-services">
+          <div class="chapter-heading">
+            <p class="eyebrow">02 / Beyond the frame</p>
+            <span class="chapter-index" aria-hidden="true">WALLS</span>
+          </div>
+          <div class="wall-layout">
+            <div class="wall-copy" data-entrance="">
+              <h2>Your walls are<br />a blank <em>canvas.</em></h2>
+              <p>
+                A reading corner. A room to gather in. A wall you walk past
+                every day. Make it somewhere your imagination can live.
+              </p>
+              <button
+                type="button"
+                class="parchment-button"
+                data-page="bookings"
+              >
+                Book wall painting ↗
+              </button>
+              <p class="handwritten">A little colour changes everything.</p>
+            </div>
+            <figure class="wall-study">
+              <div
+                class="room-comparison"
+                role="group"
+                aria-label="Illustrated wall before and after painting"
+              >
+                <img
+                  src="./illustrations/room-plain.svg"
+                  alt="Reading corner with a plain plaster wall, chair, lamp and clay vase"
+                  loading="lazy"
+                  draggable="false"
+                />
+                <div class="room-after">
+                  <img
+                    src="./illustrations/room-painted.svg"
+                    alt=""
+                    loading="lazy"
+                    draggable="false"
+                  />
+                </div>
+                <div class="room-divider" aria-hidden="true">
+                  <span>↔</span>
+                </div>
+                <span class="room-label room-label-before">Before</span
+                ><span class="room-label room-label-after">After</span>
+                <input
+                  id="home-wall-reveal"
+                  type="range"
+                  min="0"
+                  max="100"
+                  value="62"
+                  aria-label="Reveal the painted wall"
+                  aria-valuetext="62 percent painted wall revealed"
+                  aria-describedby="home-wall-description"
+                />
+              </div>
+              <figcaption>
+                <label for="home-wall-reveal"
+                  >Drag to make a little room for colour</label
+                ><output for="home-wall-reveal">62% revealed</output>
+              </figcaption>
+              <p id="home-wall-description" class="study-note">
+                Before: plain plaster. After: pigment blue, a vermilion arch and
+                a saffron sun. An illustrated inspiration, rather than a
+                promised finish.
+              </p>
+            </figure>
+          </div>
+        </section>
+        <section class="clay-chapter" data-entrance="">
+          <div class="clay-study">
+            <span class="object-number">OBJECT STUDY / 03</span
+            ><span class="shelf-label">A STUDY IN EARTH &amp; COLOUR</span>
+            <div class="clay-display">
+              <div class="shelf-vase" aria-hidden="true"></div>
+              <div class="clay-object glaze-g-05" aria-hidden="true">
+                <svg viewBox="0 0 360 330">
+                  <ellipse
+                    cx="182"
+                    cy="294"
+                    rx="103"
+                    ry="11"
+                    class="clay-shadow"
+                  ></ellipse>
+                  <g class="clay-form">
+                    <path
+                      d="M158 54h44l-3 68c0 23 66 46 65 97-1 52-37 69-84 69s-83-17-84-69c-1-51 65-74 65-97Z"
+                    ></path>
+                    <path
+                      d="M201 139c83-38 104 86 49 89"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="18"
+                    ></path>
+                    <ellipse
+                      cx="180"
+                      cy="54"
+                      rx="22"
+                      ry="6"
+                      class="clay-mouth"
+                    ></ellipse>
+                    <path
+                      d="M108 217q72 28 144 0m-139 21q67 22 133 0"
+                      class="clay-lines"
+                    ></path>
+                  </g>
+                </svg>
+              </div>
+              <div class="shelf-cup" aria-hidden="true"></div>
+            </div>
+            <div class="clay-controls">
+              <span class="handwritten"
+                >A change of glaze, a change of mood.</span
+              >
+              <div
+                class="glaze-swatches"
+                role="group"
+                aria-label="Pottery glaze"
+              >
+                <button
+                  type="button"
+                  class="glaze-swatch glaze-g-01"
+                  data-glaze="g-01"
+                  aria-label="Kumkum Red"
+                  aria-pressed="false"
+                  title="Kumkum Red"
+                ></button>
+                <button
+                  type="button"
+                  class="glaze-swatch glaze-g-02"
+                  data-glaze="g-02"
+                  aria-label="Haldi Yellow"
+                  aria-pressed="false"
+                  title="Haldi Yellow"
+                ></button>
+                <button
+                  type="button"
+                  class="glaze-swatch glaze-g-03"
+                  data-glaze="g-03"
+                  aria-label="Mehendi Green"
+                  aria-pressed="false"
+                  title="Mehendi Green"
+                ></button>
+                <button
+                  type="button"
+                  class="glaze-swatch glaze-g-04"
+                  data-glaze="g-04"
+                  aria-label="Indigo Blue"
+                  aria-pressed="false"
+                  title="Indigo Blue"
+                ></button>
+                <button
+                  type="button"
+                  class="glaze-swatch glaze-g-05"
+                  data-glaze="g-05"
+                  aria-label="Sandalwood Beige"
+                  aria-pressed="true"
+                  title="Sandalwood Beige"
+                ></button>
+                <button
+                  type="button"
+                  class="glaze-swatch glaze-g-06"
+                  data-glaze="g-06"
+                  aria-label="Charcoal Black"
+                  aria-pressed="false"
+                  title="Charcoal Black"
+                ></button>
+              </div>
+              <p class="glaze-name" role="status">Sandalwood Beige</p>
+            </div>
+            <p class="study-note">
+              Illustrative finish study · Colours and forms are indicative.
+            </p>
+          </div>
+          <div class="clay-copy">
+            <p class="eyebrow">03 / Earth, shaped by you</p>
+            <h2>Made by hand.<br />Imagined by <em>you.</em></h2>
+            <p>
+              A kulhad for your morning chai. A surahi for the table. Objects
+              with a place in your everyday, and a little of you in their
+              making.
+            </p>
+            <div class="clay-process">
+              <span>01 / Choose a form</span><span>02 / Find your glaze</span
+              ><span>03 / Make it personal</span>
+            </div>
+            <button type="button" data-page="pottery">Request pottery ↗</button>
+          </div>
+        </section>
+        <section class="studio-services" id="studio-services">
+          <header>
+            <div>
+              <p class="eyebrow">04 / A place for your ideas</p>
+              <h2>Find your kind<br />of <em>extraordinary.</em></h2>
+            </div>
+            <p>
+              A work to live with. A space to make your own. Something to hold,
+              every day.
+            </p>
+          </header>
+          <div class="service-links">
+            <button
+              type="button"
+              class="service-link paintings-link"
+              data-page="gallery"
+            >
+              <span class="service-number">01 / THE COLLECTION</span
+              ><strong>Paintings</strong
+              ><small>Original works, individual stories.</small
+              ><span class="service-art" aria-hidden="true"
+                ><img src="./images/p-003.jpg" alt="" loading="lazy" /></span
+              ><span class="service-arrow" aria-hidden="true">↗</span>
+            </button>
+            <button
+              type="button"
+              class="service-link wall-link"
+              data-page="bookings"
+            >
+              <span class="service-number">02 / BEYOND THE FRAME</span
+              ><strong>Wall art</strong
+              ><small>Make a little room for colour.</small
+              ><span class="service-art" aria-hidden="true"
+                ><img
+                  src="./illustrations/room-painted.svg"
+                  alt=""
+                  loading="lazy" /></span
+              ><span class="service-arrow" aria-hidden="true">↗</span>
+            </button>
+            <button
+              type="button"
+              class="service-link pottery-link"
+              data-page="pottery"
+            >
+              <span class="service-number">03 / EARTH, SHAPED BY YOU</span
+              ><strong>Custom pottery</strong
+              ><small>Everyday objects, made personal.</small
+              ><span class="service-art" aria-hidden="true"
+                ><svg viewBox="0 0 360 330">
+                  <ellipse
+                    cx="182"
+                    cy="294"
+                    rx="103"
+                    ry="11"
+                    class="clay-shadow"
+                  ></ellipse>
+                  <g class="clay-form">
+                    <path
+                      d="M158 54h44l-3 68c0 23 66 46 65 97-1 52-37 69-84 69s-83-17-84-69c-1-51 65-74 65-97Z"
+                    ></path>
+                    <path
+                      d="M201 139c83-38 104 86 49 89"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="18"
+                    ></path>
+                    <ellipse
+                      cx="180"
+                      cy="54"
+                      rx="22"
+                      ry="6"
+                      class="clay-mouth"
+                    ></ellipse>
+                    <path
+                      d="M108 217q72 28 144 0m-139 21q67 22 133 0"
+                      class="clay-lines"
+                    ></path>
+                  </g></svg></span
+              ><span class="service-arrow" aria-hidden="true">↗</span>
+            </button>
+          </div>
+        </section>
+        <section class="atelier-invitation" data-entrance="">
+          <p class="eyebrow">A painting. A space. An everyday object.</p>
+          <h2>Let something<br /><em>move you.</em></h2>
+          <button type="button" class="invitation-button" data-page="bookings">
+            Begin a commission ↗</button
+          ><span class="invitation-mark" aria-hidden="true">✳</span>
+          <span class="closing-note handwritten"
+            >Your idea belongs here. ↗</span
+          >
+        </section>
+      </div>
+    </main>
+    <footer>
+      <span class="footer-wordmark">Art <em>Studio</em></span>
+      <div>
+        <p>Art for the spaces we call our own.</p>
+        <div class="footer-links">
+          <button type="button" class="text-button" data-page="gallery">
+            Paintings ↗</button
+          ><button type="button" class="text-button" data-page="bookings">
+            Wall art ↗</button
+          ><button type="button" class="text-button" data-page="pottery">
+            Pottery ↗
+          </button>
+        </div>
+      </div>
+      <span
+        >Original paintings · Wall art · Custom pottery<br />All prices in
+        INR</span
+      >
+    </footer>
+    <dialog
+      id="artwork-viewer"
+      class="artwork-viewer"
+      aria-labelledby="artwork-title"
+    ></dialog>
+    <dialog id="editor" aria-labelledby="editor-title"></dialog>
+    <noscript
+      >Enable JavaScript to sign in, explore live availability and manage your
+      commissions.</noscript
+    >
+  </body>
+</html>

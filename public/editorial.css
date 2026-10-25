@@ -1,0 +1,1534 @@
+/* STUDIO PINBOARD — HTML/CSS presentation only.
+   Backend, browser bindings and form attributes are intentionally unchanged. */
+:root {
+  --studio-ivory: #f5f0e6;
+  --studio-charcoal: #1d1c1a;
+  --studio-blue: #2446c8;
+  --studio-clay: #b77c5d;
+  --studio-red: #d74e32;
+  --space-section: clamp(4.5rem, 8.5vw, 8.5rem);
+  --space-edge: clamp(1.25rem, 5vw, 5rem);
+}
+body {
+  overflow-wrap: break-word;
+}
+button,
+a,
+summary,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+button,
+.button {
+  transition:
+    background-color 0.2s,
+    box-shadow 0.2s,
+    transform 0.25s;
+}
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--indigo);
+  outline-offset: 5px;
+}
+.site-header {
+  padding-block: 1.15rem;
+}
+button.brand {
+  font-size: 2.4rem;
+}
+nav {
+  border-top-color: transparent;
+}
+nav button {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+}
+.eyebrow {
+  font-size: 0.63rem;
+  letter-spacing: 0.18em;
+}
+
+/* One large canvas, two pinned studies and a painted-paper backdrop. */
+.atelier-hero {
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  gap: clamp(1rem, 2.5vw, 3rem);
+  padding: 3.3rem var(--space-edge) 4rem;
+  min-height: 720px;
+}
+.hero-copy {
+  padding: 0;
+}
+.hero-copy .eyebrow {
+  margin: 0 0 2.2rem;
+  letter-spacing: 0.18em;
+  font-size: 0.6rem;
+}
+.living-dot {
+  background: #d74e32;
+  box-shadow: none;
+  width: 7px;
+  height: 7px;
+}
+.hero-copy h1 {
+  font-size: clamp(4rem, 7.1vw, 7.6rem);
+  line-height: 0.89;
+  letter-spacing: -0.065em;
+  margin-bottom: 1.6rem;
+}
+.hero-copy .hero-extraordinary,
+[data-theme="light"] .hero-copy .hero-extraordinary {
+  display: table;
+  position: relative;
+  color: #fff8e9;
+  background: #2446c8;
+  font-weight: 400;
+  padding: 0.02em 0.14em 0.13em;
+  margin: 0.11em 0 0.17em -0.1em;
+  rotate: -2deg;
+  box-shadow: 6px 8px 0 #00000012;
+  animation: pinboard-type 0.7s ease-out both;
+}
+.hero-extraordinary::after {
+  content: "";
+  position: absolute;
+  height: 0.07em;
+  bottom: 0.055em;
+  left: 5%;
+  right: 5%;
+  background: #e8b64a;
+  clip-path: polygon(0 25%, 38% 0, 100% 45%, 99% 80%, 45% 90%, 1% 100%);
+  transform-origin: left;
+  animation: brush-line 0.8s 0.15s both;
+}
+.hero-description {
+  max-width: 350px;
+  font-size: 0.88rem;
+  line-height: 1.8;
+  margin: 1.5rem 0 1.7rem;
+}
+.hero-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
+}
+.hero-actions > button {
+  color: var(--paper);
+  background: var(--ink);
+  border-color: var(--ink);
+  min-height: 49px;
+  padding-inline: 1.4rem;
+  font-size: 0.74rem;
+}
+.commission-link {
+  font-size: 0.7rem;
+  padding-block: 0.8rem;
+}
+.hero-footnote {
+  margin-top: 1.8rem;
+  gap: 0;
+}
+.hero-footnote > .handwritten {
+  display: none;
+}
+.hero-scroll {
+  font-size: 0.56rem;
+  letter-spacing: 0.23em;
+}
+.hero-margin-note {
+  margin: 1.2rem 0 0 32%;
+  font: italic 1.2rem/1.1 var(--serif);
+  color: var(--muted);
+  rotate: -5deg;
+}
+.hero-margin-note > span {
+  float: left;
+  font: 2.3rem/0.8 var(--serif);
+  padding-right: 0.5rem;
+  color: var(--accent);
+}
+.artwork-stage {
+  position: relative;
+  isolation: isolate;
+  min-height: 585px;
+  background: none;
+}
+.artwork-stage::before {
+  content: "";
+  position: absolute;
+  inset: 7% 5% 8% 18%;
+  height: auto;
+  background: #2446c8;
+  border: 0;
+  border-radius: 48% 48% 2px 2px;
+  transform: rotate(6deg);
+  box-shadow: 9px 13px 0 #2446c82b;
+  z-index: -1;
+}
+.artwork-stage::after {
+  content: "";
+  inset: auto 0 -2% 18%;
+  height: 1px;
+  width: auto;
+  background: var(--field-line);
+  opacity: 0.5;
+  transform: rotate(-3deg);
+}
+.stage-window {
+  display: none;
+}
+.hero-frame .frame-picture {
+  animation: canvas-settle 0.85s both;
+  box-shadow:
+    2px 3px 2px #0004,
+    15px 24px 30px #0005;
+}
+.hero-frame img {
+  max-height: none;
+  height: auto;
+  object-fit: contain;
+}
+.frame-one {
+  width: 77%;
+  max-width: none;
+  left: 18%;
+  right: auto;
+  top: 31%;
+  z-index: 3;
+  transform: translate(var(--depth-x), var(--depth-y)) rotate(-5deg);
+}
+.frame-one .frame-picture {
+  padding: clamp(10px, 1.5vw, 20px);
+  background: #eee5cf;
+  border: 5px solid #433428;
+}
+.frame-two {
+  width: 30%;
+  max-width: none;
+  left: 0;
+  right: auto;
+  top: 5%;
+  z-index: 4;
+  transform: translate(calc(var(--depth-x) * -0.6), calc(var(--depth-y) * -0.6))
+    rotate(-8deg);
+}
+.frame-two .frame-picture {
+  padding: 9px;
+  background: #e8decc;
+  border: 3px solid #b58d60;
+  animation-delay: 0.12s;
+}
+.frame-two figcaption {
+  display: block;
+  color: #1d1c1a;
+  background: #f5f0e6;
+  font-size: 0.55rem;
+  line-height: 1.4;
+  padding: 0.6rem 0.55rem;
+}
+.frame-three {
+  width: 31%;
+  left: auto;
+  right: 1%;
+  top: 2%;
+  z-index: 2;
+  transform: translate(calc(var(--depth-x) * 0.4), calc(var(--depth-y) * 0.4))
+    rotate(10deg);
+}
+.frame-three .frame-picture {
+  padding: 8px;
+  border: 1px solid #e4d8bf;
+  background: #f5f0e6;
+  animation-delay: 0.22s;
+}
+.frame-two::before,
+.frame-three::before {
+  content: "";
+  position: absolute;
+  z-index: 5;
+  width: 43%;
+  height: 18px;
+  top: -9px;
+  left: 26%;
+  rotate: -7deg;
+  background: #d7b989b8;
+  clip-path: polygon(2% 0, 100% 9%, 95% 100%, 0 91%);
+  box-shadow: 0 1px 1px #0002;
+}
+.hero-art-label {
+  position: absolute;
+  left: 24%;
+  bottom: 0;
+  top: auto;
+  max-width: 62%;
+  background: #f5f0e6;
+  color: #62594c;
+  border-left: 3px solid #d74e32;
+  padding: 0.65rem 1rem;
+  rotate: -2deg;
+  box-shadow: 4px 7px 10px #0002;
+  z-index: 5;
+}
+.hero-art-label > span {
+  font-size: 0.47rem;
+  letter-spacing: 0.12em;
+}
+.hero-art-label > strong {
+  color: #1d1c1a;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+.hero-art-label > small {
+  font-size: 0.6rem;
+}
+.stage-coordinate {
+  top: 25%;
+  right: 0;
+  font-size: 0.48rem;
+  letter-spacing: 0.14em;
+}
+.stage-plinth {
+  bottom: 3%;
+  left: 2%;
+  width: 17%;
+  height: 12%;
+  z-index: 4;
+}
+.stage-note {
+  left: -2%;
+  bottom: 24%;
+  max-width: 115px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  rotate: -8deg;
+}
+.stage-index {
+  bottom: -6%;
+  right: 0;
+  font-size: 0.5rem;
+}
+.studio-stamp {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: auto;
+  z-index: 6;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 0;
+  padding: 0;
+  transform: none;
+  white-space: normal;
+  background: #e8b64a;
+  color: #1d1c1a;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font:
+    0.55rem/1.2 "Segoe UI",
+    sans-serif;
+  letter-spacing: 0.1em;
+  rotate: 14deg;
+  outline: 1px dashed #1d1c1a66;
+  outline-offset: -7px;
+}
+.studio-stamp strong {
+  font: 400 1.9rem/0.7 var(--serif);
+  letter-spacing: -0.04em;
+}
+.studio-pin {
+  position: absolute;
+  top: 11%;
+  left: 29%;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #e8b64a;
+  box-shadow: 2px 4px 3px #0004;
+}
+
+/* The service index feels like three small prints laid on a table. */
+.disciplines {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 var(--space-edge);
+  gap: 1rem;
+  border: 0;
+}
+button.discipline {
+  position: relative;
+  padding: 1.7rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  gap: 1rem;
+}
+button.discipline:hover {
+  background: var(--raised);
+  transform: translateY(-4px);
+}
+.discipline strong {
+  font-size: 1.75rem;
+  letter-spacing: -0.04em;
+}
+.discipline small {
+  font-size: 0.65rem;
+  margin-top: 0.4rem;
+}
+.discipline-number {
+  align-self: flex-start;
+  color: var(--accent);
+  font:
+    0.65rem/1.5 "Segoe UI",
+    sans-serif;
+}
+.discipline-arrow {
+  align-self: start;
+  color: var(--accent);
+}
+
+/* An ivory exhibition wall with an intentionally uneven hanging rhythm. */
+.home-collection {
+  --paper: #f5f0e6;
+  --surface: #faf6ee;
+  --raised: #e9e0d0;
+  --ink: #1d1c1a;
+  --muted: #62594c;
+  --line: #cfc4b4;
+  --field-line: #8b7d6a;
+  --field: #faf6ee;
+  --accent: #9d3825;
+  --accent-ink: #fffaf1;
+  --indigo: #2446c8;
+  --good: #34542b;
+  --good-bg: #e7ecdf;
+  --quiet: #6c4f38;
+  --quiet-bg: #e9dfcf;
+  max-width: none;
+  padding: var(--space-section) var(--space-edge);
+  margin-top: var(--space-section);
+  background: #f5f0e6 url("./illustrations/paper-grain.svg");
+  color: #1d1c1a;
+  clip-path: polygon(
+    0 12px,
+    8% 3px,
+    19% 9px,
+    33% 0,
+    50% 7px,
+    71% 1px,
+    89% 8px,
+    100% 0,
+    100% 100%,
+    0 100%
+  );
+}
+.home-collection > * {
+  max-width: 1380px;
+  margin-inline: auto;
+}
+.section-heading {
+  align-items: end;
+  gap: 2.5rem;
+}
+.section-heading h2 {
+  font-size: clamp(3.3rem, 5.7vw, 6rem);
+  line-height: 0.92;
+  max-width: 750px;
+}
+.section-heading h2 em {
+  color: #2446c8;
+}
+.section-aside {
+  max-width: 260px;
+  padding-bottom: 0.4rem;
+}
+.section-aside p {
+  font-size: 0.81rem;
+}
+.preview-gallery {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.75fr);
+  gap: 3.5rem clamp(3rem, 8vw, 9rem);
+  align-items: center;
+  padding-block: 4rem;
+}
+.preview-work {
+  padding: 0;
+}
+.preview-work-1 {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  align-self: center;
+}
+.preview-work-2 {
+  grid-column: 2;
+  grid-row: 1;
+  width: 95%;
+  justify-self: end;
+}
+.preview-work-3 {
+  grid-column: 2;
+  grid-row: 2;
+  width: 79%;
+  justify-self: start;
+}
+.preview-work .frame-picture {
+  padding: clamp(10px, 1.5vw, 22px);
+  box-shadow:
+    4px 5px 2px #34291a15,
+    15px 24px 32px #34291a24;
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+}
+.preview-work img {
+  width: 100%;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+}
+.preview-work button.preview-open {
+  min-height: 44px;
+  font-size: 0.68rem;
+}
+.preview-work-1 .frame-picture {
+  transform: rotate(-3deg);
+}
+.preview-work-2 .frame-picture {
+  transform: rotate(4deg);
+  background: #d3b982;
+  border-color: #93754b;
+}
+.preview-work-3 .frame-picture {
+  transform: rotate(-5deg);
+  background: #e7dcc7;
+  border-color: #bda67e;
+}
+.preview-work:hover .frame-picture,
+.preview-work:focus-within .frame-picture {
+  transform: translateY(-7px) rotate(0);
+  box-shadow:
+    4px 5px 2px #34291a15,
+    18px 32px 38px #34291a35;
+}
+.framed-work figcaption {
+  font-size: 0.9rem;
+  line-height: 1.35;
+  padding-top: 1.1rem;
+}
+.framed-work figcaption > small {
+  font-size: 0.63rem;
+  letter-spacing: 0.05em;
+}
+.exhibition-number {
+  display: block;
+  font:
+    0.53rem/1.5 "Segoe UI",
+    sans-serif;
+  color: #62594c;
+  letter-spacing: 0.16em;
+  margin-bottom: 0.35rem;
+}
+.collection-scribble {
+  position: absolute;
+  bottom: 12%;
+  left: 9%;
+  font-size: 1.2rem;
+  rotate: -5deg;
+  color: #9d3825;
+}
+.collection-colophon {
+  border-top: 1px solid #cfc4b4;
+  padding-top: 1.4rem;
+  gap: 2rem;
+}
+.collection-colophon p {
+  font-size: 0.65rem;
+}
+.home-live-gallery {
+  padding-block: 4rem 2rem;
+}
+.home-live-gallery .painting-card:nth-child(2) {
+  margin-top: 4rem;
+}
+.home-live-gallery .painting-card:nth-child(3) {
+  margin-top: 1.5rem;
+}
+
+/* Pigment-blue wall commission, with the existing working native range. */
+.wall-chapter {
+  padding: 3rem var(--space-edge) var(--space-section);
+  background: #2446c8;
+  color: #fff8e9;
+}
+.wall-chapter::before {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 89px,
+    #fff8e908 90px 91px
+  );
+  opacity: 1;
+  pointer-events: none;
+}
+.chapter-heading {
+  max-width: 1380px;
+  margin-inline: auto;
+}
+.chapter-index {
+  font: 400 4rem/1 var(--serif);
+  letter-spacing: -0.07em;
+  opacity: 0.55;
+}
+.wall-layout {
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(2rem, 5vw, 6rem);
+  align-items: center;
+  max-width: 1380px;
+  margin: auto;
+}
+.wall-copy h2 {
+  font-size: clamp(3.7rem, 6.1vw, 6.7rem);
+  line-height: 0.91;
+}
+.wall-copy h2 em {
+  color: #fff8e9;
+  border-bottom: 2px solid #e8b64a;
+}
+.wall-copy > p:not(.eyebrow) {
+  font-size: 0.84rem;
+}
+.wall-copy > .handwritten {
+  color: #fff8e9;
+  opacity: 0.9;
+  font-size: 1.2rem;
+}
+.room-comparison {
+  border: 9px solid #f5f0e6;
+  box-shadow:
+    14px 19px 0 #1636a3,
+    20px 29px 35px #0b227644;
+  rotate: 1.5deg;
+}
+.wall-study {
+  min-width: 0;
+  margin: 0;
+}
+.wall-study figcaption {
+  padding-top: 1.4rem;
+}
+.wall-study .study-note {
+  color: #e2e7ff;
+  font-size: 0.65rem;
+  max-width: 570px;
+}
+
+/* A glaze-sample board and a little shelf of illustrated ceramic objects. */
+.clay-chapter {
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(3rem, 6vw, 7rem);
+  padding: var(--space-section) var(--space-edge);
+  background: #e8d8c7;
+  color: #35271f;
+}
+.clay-study {
+  position: relative;
+  min-height: 600px;
+  padding: 2rem;
+  background: #d7b99a;
+  background-image: radial-gradient(
+    ellipse at 35% 5%,
+    #f0dfc5,
+    transparent 70%
+  );
+  color: #422e1e;
+  border: 1px solid #b58d6d;
+  box-shadow: 11px 14px 0 #c2a083;
+  rotate: -1.5deg;
+}
+.object-number {
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+}
+.shelf-label {
+  float: right;
+  font-size: 0.48rem;
+  letter-spacing: 0.12em;
+  padding-top: 0.1rem;
+}
+.clay-display {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 520px;
+  min-height: 310px;
+  padding: 1rem 0 0;
+  margin: 1.5rem auto 1rem;
+}
+.clay-display::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  bottom: 5%;
+  left: 1%;
+  right: 1%;
+  height: 9%;
+  background: linear-gradient(90deg, #9f6c4b, #c59169);
+  box-shadow: 0 18px 19px #6f472b40;
+  transform: skewY(-3deg);
+}
+.clay-display .clay-object {
+  position: relative;
+  width: 80%;
+  margin-inline: auto;
+  margin-bottom: 2%;
+  z-index: 1;
+  transition: color 0.45s;
+}
+.shelf-vase {
+  position: absolute;
+  z-index: 2;
+  bottom: 13%;
+  left: 4%;
+  width: 20%;
+  height: 35%;
+  background: linear-gradient(90deg, #a86f4d, #d4a17b 60%, #b77c5d);
+  border-radius: 45% 45% 27% 27%;
+  box-shadow: 9px 8px 10px #67472d30;
+  rotate: -5deg;
+}
+.shelf-vase::before {
+  content: "";
+  position: absolute;
+  bottom: 85%;
+  height: 42%;
+  width: 41%;
+  left: 29%;
+  background: linear-gradient(90deg, #aa7350, #d7a478);
+  border-radius: 3px 3px 0 0;
+}
+.shelf-cup {
+  position: absolute;
+  z-index: 2;
+  width: 20%;
+  height: 20%;
+  right: 1%;
+  bottom: 11%;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 12px, #61492b18 13px 14px),
+    linear-gradient(90deg, #c7a775, #edcf95 55%, #c7a775);
+  border-radius: 10% 10% 25% 25%;
+  box-shadow: 9px 9px 10px #67472d30;
+}
+.shelf-cup::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 12px;
+  top: -6px;
+  border-radius: 50%;
+  background: #6e5a3a;
+  border: 3px solid #e9c98f;
+}
+.clay-controls {
+  border: 0;
+  padding-top: 0.5rem;
+}
+.clay-controls .handwritten {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+.clay-study .glaze-swatches {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin: 0;
+}
+.clay-study .glaze-swatch {
+  width: auto;
+  height: auto;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid #8f694f;
+  padding: 0.5rem;
+  background: transparent;
+  color: #422e1e;
+  border-radius: 0;
+  box-shadow: none;
+}
+.clay-study .glaze-swatch::before {
+  content: "";
+  display: block;
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #3d2b2055;
+  border-radius: 50%;
+  background: var(--glaze-color);
+}
+.clay-study .glaze-swatch::after {
+  content: attr(aria-label);
+  position: static;
+  font:
+    0.72rem/1.35 "Segoe UI",
+    sans-serif;
+  color: #422e1e;
+  text-align: left;
+}
+.clay-study .glaze-swatch[aria-pressed="true"] {
+  background: #f6ead5;
+  border: 2px solid #654633;
+  padding: calc(0.5rem - 1px);
+  outline: none;
+}
+.clay-study .glaze-swatch:focus-visible {
+  outline: 3px solid #2446c8;
+  outline-offset: 3px;
+}
+.clay-study .glaze-name {
+  font: italic 1.15rem/1.5 var(--serif);
+  margin-block: 0.8rem 0.2rem;
+}
+.clay-study .study-note {
+  color: #58402e;
+  font-size: 0.6rem;
+}
+.clay-copy h2 {
+  font-size: clamp(3.7rem, 6vw, 6.7rem);
+  line-height: 0.91;
+}
+.clay-copy h2 em {
+  color: #994029;
+}
+.clay-copy .eyebrow,
+.clay-copy > p:not(.eyebrow) {
+  color: #594335;
+}
+.clay-copy > p:not(.eyebrow) {
+  font-size: 0.88rem;
+  line-height: 1.8;
+}
+.clay-process {
+  border-block: 1px solid #9d7b615c;
+  padding-block: 1.2rem;
+  margin-block: 1.5rem 2rem;
+}
+.clay-copy > button {
+  background: #35271f;
+  color: #fff4e5;
+  border-color: #35271f;
+}
+
+/* Three compositions, one system: a print, an arch and an earthen object. */
+.studio-services {
+  padding: var(--space-section) var(--space-edge);
+  max-width: 1600px;
+  margin: auto;
+}
+.studio-services > header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+.studio-services h2 {
+  font-size: clamp(3.5rem, 5.8vw, 6rem);
+  line-height: 0.93;
+  margin: 0.8rem 0 0;
+}
+.studio-services > header > p {
+  max-width: 250px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.service-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+.service-link {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: stretch;
+  text-align: left;
+  min-height: 390px;
+  padding: 1.5rem;
+  background: #e9dfce;
+  color: #1d1c1a;
+  border: 0;
+  overflow: hidden;
+  box-shadow: 5px 7px 0 #00000016;
+}
+.service-link:hover,
+.service-link:focus-visible {
+  transform: translateY(-7px) rotate(0);
+  box-shadow: 10px 17px 25px #0002;
+}
+.service-link:first-child {
+  rotate: -2deg;
+}
+.service-link:nth-child(2) {
+  margin-top: 3rem;
+}
+.service-link:nth-child(3) {
+  rotate: 2deg;
+}
+.service-number {
+  font-size: 0.57rem;
+  letter-spacing: 0.16em;
+}
+.service-link strong {
+  font: 400 clamp(2.2rem, 3.3vw, 3.7rem)/0.95 var(--serif);
+  letter-spacing: -0.04em;
+  margin-top: 1rem;
+}
+.service-link small {
+  font-size: 0.68rem;
+  margin-top: 0.65rem;
+}
+.service-link .service-art {
+  flex: 1;
+  min-height: 210px;
+  display: grid;
+  place-items: center;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  border: 0;
+  transform: none;
+  background: none;
+}
+.service-link .service-art img {
+  width: 66%;
+  height: 180px;
+  object-fit: contain;
+  transform: rotate(-7deg);
+  filter: drop-shadow(8px 12px 8px #392c2740);
+  border: 0;
+}
+.service-link.wall-link {
+  background: #d5def5;
+  color: #173274;
+}
+.wall-link .service-art {
+  background: #2446c8;
+  border-radius: 120px 120px 0 0;
+  margin: 1.5rem 1rem -1.5rem;
+}
+.wall-link .service-art img {
+  width: 100%;
+  height: 200px;
+  transform: none;
+  filter: none;
+}
+.service-link.pottery-link {
+  background: #b77c5d;
+  color: #271d16;
+}
+.pottery-link .service-art svg {
+  width: 180px;
+  height: 200px;
+  color: #f0d4ac;
+  filter: drop-shadow(15px 12px 7px #58351d40);
+}
+.service-arrow {
+  position: absolute;
+  top: 0.8rem;
+  right: 1.2rem;
+  font-size: 1.5rem;
+}
+.atelier-invitation {
+  position: relative;
+  background: #f5f0e6;
+  color: #1d1c1a;
+  padding: clamp(5rem, 10vw, 10rem) var(--space-edge);
+  border-top: 1px solid #cfc4b4;
+  text-align: left;
+}
+.atelier-invitation .eyebrow {
+  color: #62594c;
+}
+.atelier-invitation h2 {
+  max-width: 1050px;
+  font-size: clamp(5.4rem, 12.5vw, 13rem);
+  line-height: 0.79;
+  letter-spacing: -0.065em;
+  margin: 3rem 0 2rem;
+}
+.atelier-invitation h2 em {
+  color: #2446c8;
+}
+.invitation-button {
+  position: absolute;
+  right: 9%;
+  top: 45%;
+  width: 165px;
+  min-height: 165px;
+  border-radius: 50%;
+  padding: 2rem;
+  background: #1d1c1a;
+  color: #fff8e9;
+  border: 1px solid #1d1c1a;
+  font-size: 0.83rem;
+  line-height: 1.6;
+  rotate: -7deg;
+  box-shadow: 8px 9px 0 #b8c4f3;
+}
+.invitation-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 11px 16px 0 #b8c4f3;
+}
+.invitation-mark {
+  top: 13%;
+  right: 7%;
+  color: #d74e32;
+  font-size: 4rem;
+  opacity: 1;
+}
+.closing-note {
+  display: block;
+  color: #62594c;
+  margin: 3rem 0 0 46%;
+  font-size: 1.2rem;
+  rotate: -5deg;
+}
+footer {
+  --ink: #f5f0e6;
+  --paper: #1d1c1a;
+  --muted: #bdb7aa;
+  --line: #565048;
+  --accent: #f5f0e6;
+  background: #1d1c1a;
+  color: #f5f0e6;
+  border: 0;
+  padding: 4rem var(--space-edge) 3rem;
+  gap: 3rem;
+}
+footer .footer-wordmark {
+  color: #f5f0e6;
+  font-size: clamp(3rem, 5vw, 5rem);
+  line-height: 1;
+}
+footer p {
+  color: #bdb7aa;
+}
+footer .footer-links .text-button {
+  color: #f5f0e6;
+}
+
+/* Keep live forms and management screens comfortable and predictable. */
+body:not([data-screen="home"]) main {
+  padding-top: 3rem;
+}
+.intro {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 2.5rem;
+}
+.intro h1 {
+  line-height: 0.97;
+}
+.painting-card {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1.6rem;
+}
+.painting-card h2 {
+  overflow-wrap: anywhere;
+  font-size: clamp(1.7rem, 2.2vw, 2.3rem);
+  line-height: 1.1;
+}
+.artwork-open {
+  transition: transform 0.3s;
+}
+.painting-card:hover .artwork-open,
+.painting-card:focus-within .artwork-open {
+  transform: translateY(-5px);
+}
+details {
+  border-block: 1px solid var(--line);
+}
+summary {
+  cursor: pointer;
+  padding-block: 0.65rem;
+}
+input,
+select,
+textarea {
+  min-height: 48px;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 2px var(--indigo-wash);
+}
+.panel,
+.record,
+.metric {
+  border-color: var(--line);
+  box-shadow: none;
+}
+.studio-view .intro h1 {
+  font-size: clamp(3.3rem, 6vw, 5.7rem);
+}
+.studio-view table {
+  font-size: 0.82rem;
+}
+.studio-view table th {
+  letter-spacing: 0.09em;
+  font-size: 0.64rem;
+  padding-block: 1.1rem;
+}
+.studio-view .metric {
+  background: var(--surface);
+  border-top: 2px solid var(--clay);
+}
+@keyframes pinboard-type {
+  from {
+    translate: 0 12px;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+@keyframes brush-line {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes canvas-settle {
+  from {
+    opacity: 0.6;
+    translate: 0 20px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (max-width: 1100px) {
+  .atelier-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    min-height: 650px;
+    gap: 1.5rem;
+  }
+  .hero-copy h1 {
+    font-size: clamp(3.6rem, 7vw, 6rem);
+  }
+  .hero-actions {
+    gap: 1rem;
+  }
+  .artwork-stage {
+    min-height: 490px;
+  }
+  .studio-stamp {
+    width: 80px;
+    height: 80px;
+    right: -1%;
+    bottom: auto;
+    font-size: 0.45rem;
+  }
+  .hero-art-label > strong {
+    font-size: 1rem;
+  }
+  .stage-note {
+    font-size: 0.8rem;
+    max-width: 90px;
+  }
+  .clay-chapter {
+    gap: 3rem;
+  }
+  .clay-study {
+    padding: 1.4rem;
+  }
+  .clay-study .glaze-swatches {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .shelf-label {
+    display: none;
+  }
+  .invitation-button {
+    width: 140px;
+    min-height: 140px;
+    right: 7%;
+  }
+}
+@media (max-width: 800px) {
+  .atelier-hero {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding-top: 2.5rem;
+    min-height: 0;
+  }
+  .hero-copy {
+    max-width: 650px;
+  }
+  .hero-copy h1 {
+    font-size: clamp(4rem, 10.5vw, 6.5rem);
+  }
+  .hero-copy .eyebrow {
+    margin-bottom: 2rem;
+  }
+  .hero-margin-note {
+    margin-left: 50%;
+  }
+  .artwork-stage {
+    width: min(100%, 600px);
+    justify-self: end;
+    min-height: 535px;
+    margin-bottom: 1.5rem;
+  }
+  .hero-art-label {
+    bottom: 0;
+  }
+  .studio-stamp {
+    width: 90px;
+    height: 90px;
+  }
+  .preview-gallery {
+    gap: 3rem;
+  }
+  .collection-scribble {
+    left: 0;
+    bottom: 6%;
+    font-size: 1rem;
+    max-width: 160px;
+  }
+  .wall-layout,
+  .clay-chapter {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .wall-copy {
+    max-width: 600px;
+  }
+  .wall-copy h2,
+  .clay-copy h2 {
+    font-size: clamp(3.8rem, 9vw, 5.8rem);
+  }
+  .clay-copy {
+    grid-row: 1;
+  }
+  .clay-study {
+    max-width: 600px;
+    width: 100%;
+    justify-self: center;
+    min-height: 0;
+  }
+  .clay-study .glaze-swatches {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .clay-display {
+    min-height: 300px;
+  }
+  .service-links {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .service-link {
+    min-height: 300px;
+    padding: 2rem;
+    rotate: 0deg !important;
+  }
+  .service-link:nth-child(2) {
+    margin-top: 0;
+  }
+  .service-link strong {
+    font-size: 3rem;
+  }
+  .service-link .service-art {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 50%;
+    margin: 0;
+    pointer-events: none;
+  }
+  .wall-link .service-art {
+    border-radius: 100px 0 0;
+  }
+  .studio-services > header {
+    flex-direction: column;
+    align-items: start;
+  }
+  .atelier-invitation h2 {
+    font-size: clamp(5.5rem, 13vw, 8rem);
+  }
+  .invitation-button {
+    position: relative;
+    inset: auto;
+    margin-left: 60%;
+  }
+  .closing-note {
+    margin-left: 25%;
+    margin-top: 1.8rem;
+  }
+}
+@media (max-width: 620px) {
+  .disciplines {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+  button.discipline {
+    min-height: 84px;
+    padding: 1.1rem 1.4rem;
+  }
+  .discipline strong {
+    font-size: 1.65rem;
+  }
+  .discipline small {
+    font-size: 0.65rem;
+  }
+  .discipline-number {
+    align-self: center;
+  }
+  .home-collection {
+    margin-top: 4rem;
+  }
+  .section-heading {
+    display: grid;
+    gap: 1.5rem;
+  }
+  .section-heading h2 {
+    font-size: 3.5rem;
+  }
+  .section-aside {
+    max-width: 340px;
+  }
+  .preview-gallery {
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
+    padding-block: 3.5rem 2rem;
+  }
+  .preview-work-1,
+  .preview-work-2,
+  .preview-work-3 {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .preview-work-2 {
+    width: 80%;
+  }
+  .preview-work-3 {
+    width: 88%;
+  }
+  .collection-scribble {
+    display: none;
+  }
+  .collection-colophon {
+    flex-direction: column;
+    align-items: start;
+    gap: 0.7rem;
+  }
+  .home-live-gallery .painting-card:nth-child(2),
+  .home-live-gallery .painting-card:nth-child(3) {
+    margin-top: 0;
+  }
+  .room-comparison {
+    border-width: 6px;
+    box-shadow: 8px 12px 0 #1636a3;
+  }
+  .clay-study {
+    padding: 1.2rem;
+    rotate: 0deg;
+    box-shadow: 6px 8px 0 #c2a083;
+  }
+  .clay-study .glaze-swatches {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .clay-display {
+    min-height: 250px;
+  }
+  footer {
+    grid-template-columns: 1fr;
+    gap: 1.6rem;
+    padding-block: 3rem;
+  }
+  footer > span:last-child {
+    text-align: left;
+  }
+}
+@media (max-width: 480px) {
+  .site-header {
+    padding-block: 0.9rem;
+  }
+  button.brand {
+    font-size: 1.9rem;
+  }
+  .atelier-hero {
+    padding-top: 2.2rem;
+    padding-bottom: 2.8rem;
+  }
+  .hero-copy h1 {
+    font-size: clamp(3.2rem, 13vw, 4.4rem);
+  }
+  .hero-copy .eyebrow {
+    font-size: 0.52rem;
+  }
+  .hero-description {
+    font-size: 0.81rem;
+  }
+  .hero-actions {
+    gap: 0.9rem;
+  }
+  .hero-actions > button {
+    min-height: 47px;
+    padding-inline: 1rem;
+    font-size: 0.69rem;
+  }
+  .commission-link {
+    font-size: 0.63rem;
+    gap: 0.5rem;
+  }
+  .hero-footnote {
+    margin-top: 1.4rem;
+  }
+  .hero-margin-note {
+    margin: 1rem 0 0 45%;
+    font-size: 1rem;
+  }
+  .artwork-stage {
+    min-height: 365px;
+    margin-top: 1rem;
+  }
+  .frame-one {
+    width: 77%;
+    top: 29%;
+  }
+  .frame-one .frame-picture {
+    padding: 9px;
+    border-width: 4px;
+  }
+  .frame-two {
+    top: 3%;
+    width: 29%;
+  }
+  .frame-two .frame-picture {
+    padding: 5px;
+  }
+  .frame-two figcaption {
+    display: none;
+  }
+  .frame-three {
+    width: 30%;
+    top: 0;
+  }
+  .hero-art-label {
+    left: 24%;
+    max-width: 68%;
+    padding: 0.55rem 0.7rem;
+  }
+  .hero-art-label > span {
+    font-size: 0.41rem;
+  }
+  .hero-art-label > strong {
+    font-size: 1rem;
+  }
+  .hero-art-label > small {
+    font-size: 0.54rem;
+  }
+  .stage-coordinate {
+    font-size: 0.39rem;
+    right: -2%;
+    top: 22%;
+  }
+  .stage-note,
+  .studio-pin {
+    display: none;
+  }
+  .stage-plinth {
+    width: 17%;
+    height: 11%;
+    bottom: 3%;
+  }
+  .studio-stamp {
+    width: 66px;
+    height: 66px;
+    bottom: auto;
+    right: -1%;
+    outline-offset: -5px;
+    font-size: 0.36rem;
+  }
+  .studio-stamp strong {
+    font-size: 1.5rem;
+  }
+  .stage-index {
+    font-size: 0.43rem;
+  }
+  .chapter-index {
+    font-size: 3rem;
+  }
+  .wall-copy h2,
+  .clay-copy h2 {
+    font-size: 3.45rem;
+  }
+  .service-link {
+    padding: 1.5rem;
+    min-height: 290px;
+  }
+  .service-link strong {
+    max-width: 58%;
+    font-size: 2.6rem;
+  }
+  .service-link small {
+    max-width: 50%;
+    line-height: 1.5;
+  }
+  .service-link .service-art {
+    width: 48%;
+  }
+  .atelier-invitation h2 {
+    font-size: clamp(3.3rem, 16vw, 4.8rem);
+  }
+  .invitation-button {
+    margin-left: 48%;
+    width: 130px;
+    min-height: 130px;
+    font-size: 0.75rem;
+  }
+  .invitation-mark {
+    top: 8%;
+    right: 5%;
+    font-size: 3rem;
+  }
+  .closing-note {
+    font-size: 1rem;
+    margin-left: 8%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .hero-extraordinary {
+    clip-path: none;
+  }
+  .hero-extraordinary::after {
+    transform: none;
+  }
+}

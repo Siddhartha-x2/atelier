@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 410" fill="none">
+  <title>An imagined room with an indigo and terracotta wall composition</title>
+  <path fill="#eee5d5" d="M0 0h620v410H0z" />
+  <path fill="#f7f2e9" d="M47 27h522v308H47z" />
+  <path fill="#ded2bd" d="m0 410 47-75h522l51 75H0Z" />
+  <path
+    stroke="#8d8070"
+    stroke-width="1.4"
+    d="M47 27v308h522V27M0 410l47-75m522 0 51 75"
+  />
+  <path fill="#46569a" d="M149 288V143a83 83 0 0 1 166 0v145H149Z" />
+  <path fill="#be6548" d="M286 288v-90a70 70 0 0 1 140 0v90H286Z" />
+  <circle cx="386" cy="98" r="35" fill="#d3b46f" />
+  <path
+    stroke="#eee5d5"
+    stroke-width="2"
+    d="M170 240c40-68 76 47 123-19m24 25c32-35 54-13 85-39"
+  />
+  <path
+    fill="#c6b699"
+    stroke="#7e6d54"
+    stroke-width="2"
+    d="M170 288h253v34H170z"
+  />
+  <path stroke="#7e6d54" stroke-width="4" d="M186 322v37m221-37v37" />
+  <path fill="#a96a49" d="M476 306h49l-7 50h-35l-7-50Z" />
+  <path
+    stroke="#6e7954"
+    stroke-width="3"
+    d="M499 309v-72m1 48c-23-2-35-17-33-32 21 1 34 17 33 32Zm0-18c21-3 29-19 27-32-19 2-28 18-27 32Z"
+  />
+  <path
+    stroke="#8d8070"
+    stroke-dasharray="4 5"
+    d="M86 63v207m-6-204 6-6 6 6m-12 201 6 6 6-6"
+  />
+  <path stroke="#8d8070" stroke-width="1.3" d="m440 143 63-34m-8-3 9 3-3 9" />
+</svg>

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 410" fill="none">
+  <title>A hand-drawn study of a clay jug, cup and bowl</title>
+  <path fill="#ead8c9" d="M0 0h620v410H0z" />
+  <ellipse cx="311" cy="346" rx="223" ry="24" fill="#d6b6a0" />
+  <path
+    fill="#b86749"
+    stroke="#824a38"
+    stroke-width="2"
+    d="M147 104c17-7 48-7 66 0l-7 45c43 28 57 84 48 136-8 48-28 61-75 61-48 0-70-15-77-61-7-47 5-104 52-136l-7-45Z"
+  />
+  <path stroke="#824a38" stroke-width="12" d="M222 172c69-16 80 67 30 82" />
+  <ellipse cx="180" cy="104" rx="33" ry="8" fill="#704936" />
+  <path
+    stroke="#d69b78"
+    stroke-width="2"
+    d="M119 239c43 15 88 15 132 0m-135 20c43 15 91 15 139 0m-137 20c45 15 88 15 135 0m-124 20c37 12 74 12 111 0"
+  />
+  <path
+    fill="#c78660"
+    stroke="#8b563d"
+    stroke-width="2"
+    d="M312 247h75l-9 91h-56l-10-91Z"
+  />
+  <ellipse cx="349" cy="247" rx="37" ry="9" fill="#83543d" />
+  <path
+    stroke="#e0aa83"
+    stroke-width="2"
+    d="m321 270 61 1m-58 17 55 1m-53 17h52"
+  />
+  <path
+    fill="#be6548"
+    stroke="#824a38"
+    stroke-width="2"
+    d="M400 287h140c-4 39-25 59-70 59-43 0-66-20-70-59Z"
+  />
+  <ellipse
+    cx="470"
+    cy="287"
+    rx="70"
+    ry="13"
+    fill="#d99c78"
+    stroke="#824a38"
+    stroke-width="2"
+  />
+  <path
+    stroke="#824a38"
+    stroke-width="1.4"
+    d="m263 98 93-30m-9-3 12 2-7 10m64 146 78-36m-9-3 12 2-7 10"
+  />
+  <path
+    stroke="#b2907a"
+    stroke-width="1.2"
+    d="M87 363h460M84 57l14 3m-5-10-3 16m448 14 16 4m-5-12-5 19"
+  />
+</svg>

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560">
+<defs>
+  <linearGradient id="plaster" x2="1" y2=".8"><stop stop-color="#e9dfce"/><stop offset="1" stop-color="#c6bba8"/></linearGradient>
+  <linearGradient id="floor" x2="0" y2="1"><stop stop-color="#b7a389"/><stop offset="1" stop-color="#8a7358"/></linearGradient>
+  <linearGradient id="chair" x2="1" y2=".5"><stop stop-color="#907052"/><stop offset="1" stop-color="#b48f69"/></linearGradient>
+  <linearGradient id="vase" x2="1"><stop stop-color="#754930"/><stop offset=".4" stop-color="#ba835a"/><stop offset="1" stop-color="#835235"/></linearGradient>
+  <linearGradient id="light" x2="1" y2="1"><stop stop-color="#fff8d8" stop-opacity=".62"/><stop offset="1" stop-color="#fff8d8" stop-opacity="0"/></linearGradient>
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".45" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="linear" slope=".07"/></feComponentTransfer><feBlend in="SourceGraphic" mode="multiply"/></filter>
+  <filter id="shadow"><feGaussianBlur stdDeviation="10"/></filter>
+  <clipPath id="wall"><path d="M0 0H800V440L0 431Z"/></clipPath>
+</defs>
+<path fill="url(#plaster)" d="M0 0H800V440L0 431Z"/>
+
+<path fill="url(#floor)" d="M0 431L800 440V560H0Z"/>
+<path d="M0 432L800 441" stroke="#8e806b" stroke-width="5"/>
+<path d="M0 496L800 510M140 435L95 560m230-125-10 125m189-122 36 122m130-120 91 120" fill="none" stroke="#5c4835" stroke-opacity=".18"/>
+<path fill="url(#light)" d="M40 0H174L438 560H188Z"/>
+<path fill="url(#light)" d="M190 0H300L604 560H469Z"/>
+<path fill="#2a2119" opacity=".2" filter="url(#shadow)" d="M172 496c-78-6-109-6-92 10s253 25 298 5 18-31-206-15Z"/>
+<ellipse cx="642" cy="463" rx="73" ry="10" fill="#2a2119" opacity=".2" filter="url(#shadow)"/>
+<!-- Standing reading lamp -->
+<path d="M129 444V133" stroke="#3c3b30" stroke-width="5"/>
+<ellipse cx="129" cy="447" rx="38" ry="7" fill="#3c3b30"/>
+<path d="M94 85h70l25 71H69Z" fill="#e9dcc0" stroke="#a39173"/>
+<ellipse cx="129" cy="156" rx="60" ry="8" fill="#d3c29f"/>
+<!-- Sculptural chair -->
+<path d="M206 359l-20 131m145-128 25 127" stroke="#493e31" stroke-width="11"/>
+<path d="M177 323c-17-53-5-110 51-119 49-8 101 1 109 47l19 91Z" fill="url(#chair)" stroke="#816047" stroke-width="2"/>
+<path d="M164 338c22-15 126-18 178-2l22 39c-48 26-148 28-193 10Z" fill="#ba9773" stroke="#987454" stroke-width="2"/>
+<path d="M184 346c45-13 110-11 153-2" stroke="#dab795" stroke-width="3" fill="none"/>
+<path d="M234 214q-25 56-10 109m34-110q-23 60-8 108m31-106q-20 57-7 106" stroke="#715238" opacity=".35" fill="none"/>
+<!-- Small side table with a folded paper and ceramic cup -->
+<path d="M405 409l-9 76m84-78 10 78" stroke="#4b4438" stroke-width="7"/>
+<ellipse cx="443" cy="404" rx="70" ry="15" fill="#655b49"/>
+<path d="M418 394l37-4 26 9-39 4Z" fill="#e7dec9"/>
+<path d="M406 376h23l-3 20h-17Z" fill="#a05b3b"/><ellipse cx="417" cy="376" rx="12" ry="3" fill="#66452e"/>
+<!-- Vessel and botanical stems -->
+<path d="M637 320q-24-99-39-137m43 142q20-104 57-155m-56 155q42-58 87-81" stroke="#6a6845" stroke-width="3" fill="none"/>
+<path d="M613 237q-44-9-37-40 37 7 37 40m52 6q40-16 28-42-30 8-28 42m-21 38q-33-7-35-34 33 1 35 34m55-24q18-31 43-23-9 28-43 23" fill="#7d8053"/>
+<path d="M622 313h42l-3 36c1 22 29 29 33 60 6 38-13 55-51 55s-57-17-51-55c4-31 32-38 33-60Z" fill="url(#vase)"/>
+<ellipse cx="643" cy="313" rx="21" ry="5" fill="#6b4933"/>
+<path d="M603 412q39 10 81 0m-79 13q38 9 77 0" stroke="#6a422b" opacity=".35" fill="none"/>
+<path d="M0 0H800V560H0Z" fill="transparent" filter="url(#grain)"/>
+</svg>
