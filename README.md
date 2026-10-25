@@ -39,6 +39,7 @@ Passwords are hashed before saving. Running the seed again keeps existing accoun
 ## Code
 
 - `public/` has the HTML, one stylesheet, browser JavaScript and artwork.
+- `public/app.js` handles navigation, forms and API requests. `public/ui.js` keeps the shared views and animations together.
 - `src/routes/` has one route file for each feature.
 - `src/schema.sql` defines the tables and constraints. `src/db.js` handles transactions.
 - `seed/seed.json` contains the supplied data, with the shared demo password removed.

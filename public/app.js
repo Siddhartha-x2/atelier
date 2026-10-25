@@ -1,6 +1,5 @@
-/* Plain browser JavaScript. API routes and request bodies match the existing backend. */
+// Navigation, API requests and forms. Shared visual helpers are in ui.js.
 const view = document.querySelector("#view");
-// Preserve a pristine copy of the authored HTML for returning to the homepage.
 const homeTemplate = document.createElement("template");
 homeTemplate.content.append(...Array.from(view.childNodes, (node) => node.cloneNode(true)));
 const notice = document.querySelector("#notice");
@@ -19,37 +18,71 @@ const state = {
   recordFilters: {},
   potteryGlaze: "g-05",
 };
-const money = (value) =>
-  new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 2,
-  }).format(value);
-const dateTime = (value) =>
-  new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(new Date(value));
-const capitalize = (value) => value[0].toUpperCase() + value.slice(1);
-let fieldCount = 0;
-function el(tag, props = {}, ...children) {
-  const node = document.createElement(tag);
-  for (const [key, value] of Object.entries(props)) {
-    if (key.startsWith("on")) node.addEventListener(key.slice(2).toLowerCase(), value);
-    else if (key === "className") node.className = value;
-    else if (key === "text") node.textContent = value;
-    else node.setAttribute(key, value);
-  }
-  for (const child of children.flat()) {
-    if (child !== null && child !== undefined)
-      node.append(child instanceof Node ? child : document.createTextNode(String(child)));
-  }
-  return node;
+function handleForm(form, save) {
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const body = Object.fromEntries(new FormData(form));
+    for (const name of ["price", "wallSize", "quantity"]) {
+      if (Object.hasOwn(body, name)) body[name] = Number(body[name]);
+    }
+    action(() => save(body));
+  });
 }
-const button = (label, onClick, className = "") => el("button", { type: "button", className, onClick }, label);
-const badge = (status) => el("span", { className: `badge ${status}` }, status);
-const arrowButton = (label, onClick, className = "") => button(`${label} ↗`, onClick, className);
+async function updateRecord(path, body = {}) {
+  const result = await api(path, "POST", body);
+  await loadScreen();
+  message(result.message);
+}
+function showCommission(kind, rows) {
+  const wall = kind === "bookings";
+  const policy =
+    "Requested and confirmed dates are reserved. Cancel through the day three days before your booking, in Kolkata time.";
+  const history = records(kind, rows);
+  if (state.user.role === "studio") {
+    view.replaceChildren(
+      heading(
+        wall ? "Wall bookings." : "Pottery requests.",
+        wall ? policy : "Review the chosen forms, glazes and dates. Accept or decline requested pieces.",
+        wall ? "Studio / Commissions" : "Studio / Clay",
+      ),
+      history,
+    );
+    return;
+  }
+  const intro = wall
+    ? heading(
+        "Your walls are a blank canvas.",
+        "Start with a date, a wall and a little imagination. We’ll receive your request and confirm or decline it.",
+        "02 / A commission for your space",
+      )
+    : heading(
+        "Made by hand. Imagined by you.",
+        "Choose a form, a glaze and a date. A small idea can become something you use every day.",
+        "03 / A commission in clay",
+      );
+  const study = wall ? makeWallStudy() : clayObject("i-02", state.potteryGlaze);
+  view.replaceChildren(
+    el("div", { className: `service-intro ${wall ? "indigo-intro" : "clay-intro"} enter` },
+      intro,
+      el("div", { className: wall ? "service-wall-study" : "commission-clay" }, study),
+    ),
+    el("div", { className: "two-column" },
+      el("section", { className: "panel commission-panel", id: wall ? "wall-request" : "pottery-request" },
+        el("p", { className: "eyebrow" }, "The brief"),
+        el("h2", {}, wall ? "Tell us about your wall." : "Shape your request."),
+        wall ? bookingForm() : potteryForm(),
+        wall ? el("p", { className: "hint policy-note" }, policy) : null,
+      ),
+      el("section", {},
+        el("div", { className: "section-heading compact" },
+          el("h2", {}, wall ? "Your wall requests" : "Your pottery requests"),
+          el("span", { className: "handwritten" }, wall ? "In the making." : "Little things, made personal."),
+        ),
+        history,
+      ),
+    ),
+  );
+}
 let noticeTimer;
 function message(text, error = false) {
   window.clearTimeout(noticeTimer);
@@ -120,13 +153,6 @@ async function action(work) {
       node.disabled = false;
     });
   }
-}
-function heading(title, detail, eyebrow = "From the atelier") {
-  return el("div", { className: "intro" },
-    el("p", { className: "eyebrow" }, eyebrow),
-    el("h1", {}, title),
-    el("p", { className: "muted" }, detail),
-  );
 }
 function beginLogin(signup = false, destination = null) {
   writeRoute("auth", false);
@@ -201,324 +227,6 @@ function updateHeader() {
     document.querySelectorAll("#account button, #navigation button").forEach((node) => (node.disabled = true));
 }
 document.querySelector("#brand-home").addEventListener("click", () => openScreen("home"));
-// Public editorial captions identify the supplied art, without claiming live inventory.
-const startingCollection = [
-  {
-    image: "/images/p-001.jpg",
-    title: "Madhubani Peacock Garden",
-    artist: "Meera Kumari",
-  },
-  {
-    image: "/images/p-003.jpg",
-    title: "Tanjore Lakshmi with Gold Leaf",
-    artist: "Revathi Iyer",
-  },
-  {
-    image: "/images/p-005.jpg",
-    title: "Kalamkari Tree of Life",
-    artist: "Padma Reddy",
-  },
-];
-function framedArtwork(work, className = "") {
-  return el("figure", { className: `framed-work ${className}` },
-    el("div", { className: "frame-picture" },
-      el("img", {
-        src: work.image,
-        alt: work.title,
-        loading: className.includes("hero") ? "eager" : "lazy",
-      }),
-    ),
-    el("figcaption", {}, el("span", {}, work.title), el("small", {}, work.artist)),
-  );
-}
-function makeWallStudy() {
-  const n = ++fieldCount;
-  const id = `wall-reveal-${n}`;
-  const range = el("input", {
-    id,
-    type: "range",
-    min: "0",
-    max: "100",
-    value: "62",
-    "aria-label": "Reveal the painted wall",
-    "aria-describedby": `wall-description-${n}`,
-    "aria-valuetext": "62 percent painted wall revealed",
-  });
-  const after = el("div", { className: "room-after" },
-    el("img", {
-      src: "/illustrations/room-painted.svg",
-      alt: "",
-      draggable: "false",
-      loading: "lazy",
-    }),
-  );
-  const divider = el("div", { className: "room-divider", "aria-hidden": "true" }, el("span", {}, "↔"));
-  const room = el(
-    "div",
-    {
-      className: "room-comparison",
-      role: "group",
-      "aria-label": "Illustrated wall before and after painting",
-    },
-    el("img", {
-      src: "/illustrations/room-plain.svg",
-      alt: "Illustrated reading corner with a plain plaster wall, chair, lamp and clay vase",
-      draggable: "false",
-      loading: "lazy",
-    }),
-    after,
-    divider,
-    el("span", { className: "room-label room-label-before" }, "Before"),
-    el("span", { className: "room-label room-label-after" }, "After"),
-    range,
-  );
-  const output = el("output", { for: id }, "62% revealed");
-  function update() {
-    const value = Number(range.value);
-    after.style.clipPath = `inset(0 0 0 ${100 - value}%)`;
-    divider.style.left = `${100 - value}%`;
-    range.setAttribute("aria-valuetext", `${value} percent painted wall revealed`);
-    output.value = `${value}% revealed`;
-  }
-  range.addEventListener("input", update);
-  update();
-  return el("figure", { className: "wall-study" },
-    room,
-    el("figcaption", {}, el("label", { for: id }, "Drag to make a little room for colour"), output),
-    el("p", { className: "study-note", id: `wall-description-${n}` },
-      "Before: a plain plaster wall. After: pigment blue, a vermilion arch and a saffron sun. An illustrated possibility for your space.",
-    ),
-  );
-}
-// Illustration paths are authored here; no server or user text is inserted as HTML.
-function clayObject(shape = "i-02", glaze = "g-05") {
-  const drawings = {
-    "i-01":
-      '<path d="M105 110h150l-17 140q-58 24-116 0Z"/><ellipse cx="180" cy="110" rx="75" ry="15" class="clay-mouth"/><path d="M128 145q48 14 104 0m-100 30q48 13 96 0m-92 30q44 12 88 0" class="clay-lines"/>',
-    "i-02":
-      '<path d="M158 54h44l-3 68c0 23 66 46 65 97-1 52-37 69-84 69s-83-17-84-69c-1-51 65-74 65-97Z"/><path d="M201 139c83-38 104 86 49 89" fill="none" stroke="currentColor" stroke-width="18"/><ellipse cx="180" cy="54" rx="22" ry="6" class="clay-mouth"/><path d="M108 217q72 28 144 0m-139 21q67 22 133 0" class="clay-lines"/>',
-    "i-03":
-      '<path d="M143 83h74l-6 27c4 22 66 37 67 100 2 58-45 80-98 80s-100-22-98-80c1-63 63-78 67-100Z"/><ellipse cx="180" cy="83" rx="37" ry="9" class="clay-mouth"/><path d="M94 190q86 30 172 0m-168 24q82 30 164 0" class="clay-lines"/>',
-    "i-04":
-      '<path d="M54 194q51-35 104 0-10 57-52 57t-52-57Z"/><path d="M181 194q57-45 122-1-14 58-61 58t-61-57Z"/><path d="M111 183q-16-25 4-47 13 28-4 47m136 0q-16-25 4-47 13 28-4 47" class="clay-flame"/>',
-    "i-05":
-      '<path d="M90 111h180l-28 159q-62 20-124 0Z"/><path d="M83 108h194v28H83Z"/><ellipse cx="180" cy="108" rx="97" ry="19" class="clay-mouth"/><path d="M122 171q58 19 116 0m-109 38q51 15 102 0" class="clay-lines"/>',
-  };
-  const wrapper = el("div", {
-    className: `clay-object glaze-${glaze}`,
-    "data-shape": shape,
-    "aria-hidden": "true",
-  });
-  wrapper.innerHTML = `<svg viewBox="0 0 360 330" xmlns="http://www.w3.org/2000/svg"><ellipse cx="182" cy="294" rx="103" ry="11" class="clay-shadow"/><g class="clay-form">${drawings[shape] || drawings["i-02"]}</g></svg>`;
-  return wrapper;
-}
-const glazeStudies = [
-  ["g-01", "Kumkum Red"],
-  ["g-02", "Haldi Yellow"],
-  ["g-03", "Mehendi Green"],
-  ["g-04", "Indigo Blue"],
-  ["g-05", "Sandalwood Beige"],
-  ["g-06", "Charcoal Black"],
-];
-let homeCleanup = () => {};
-function showHome() {
-  homeCleanup();
-  const ticket = ++loadScreen.ticket;
-  state.screen = "home";
-  view.removeAttribute("aria-busy");
-  updateHeader();
-  view.replaceChildren(homeTemplate.content.cloneNode(true));
-  view
-    .querySelectorAll("[data-page]")
-    .forEach((node) => node.addEventListener("click", () => openScreen(node.dataset.page)));
-  view.querySelectorAll("[data-artwork]").forEach((node) =>
-    node.addEventListener("click", () => {
-      const work = startingCollection[Number(node.dataset.artwork)];
-      openArtwork({
-        title: work.title,
-        artist: work.artist,
-        imageUrl: work.image,
-        description: "From the Art Studio collection. Open the collection for current prices and availability.",
-      });
-    }),
-  );
-  view.querySelector(".commission-link").addEventListener("click", (event) => {
-    event.preventDefault();
-    view.querySelector("#personal-services").scrollIntoView({
-      behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
-    });
-  });
-  const range = view.querySelector("#home-wall-reveal");
-  range.addEventListener("input", () => {
-    const value = Number(range.value);
-    view.querySelector(".room-after").style.clipPath = `inset(0 0 0 ${100 - value}%)`;
-    view.querySelector(".room-divider").style.left = `${100 - value}%`;
-    range.setAttribute("aria-valuetext", `${value} percent painted wall revealed`);
-    view.querySelector(".wall-study output").value = `${value}% revealed`;
-  });
-  function updateGlaze(id) {
-    state.potteryGlaze = id;
-    view.querySelector(".clay-display .clay-object").className = `clay-object glaze-${id}`;
-    view
-      .querySelectorAll("[data-glaze]")
-      .forEach((node) => node.setAttribute("aria-pressed", String(node.dataset.glaze === id)));
-    view.querySelector(".glaze-name").textContent =
-      glazeStudies.find(([value]) => value === id)?.[1] || "Sandalwood Beige";
-  }
-  view
-    .querySelectorAll("[data-glaze]")
-    .forEach((node) => node.addEventListener("click", () => updateGlaze(node.dataset.glaze)));
-  updateGlaze(state.potteryGlaze);
-  const depthCleanup = setupStageDepth(view.querySelector(".artwork-stage"));
-  const motionCleanup = setupSectionMotion(view);
-  homeCleanup = () => {
-    depthCleanup();
-    motionCleanup();
-  };
-  async function loadHomeCollection() {
-    if (!state.user || ticket !== loadScreen.ticket) return;
-    const collection = view.querySelector("[data-home-collection]");
-    const note = view.querySelector("[data-home-inventory-note]");
-    collection.className = "gallery-grid home-live-gallery";
-    collection.setAttribute("aria-busy", "true");
-    collection.replaceChildren(
-      el("p", { className: "state loading-state", role: "status" }, "Loading current paintings…"),
-    );
-    note.textContent = "Checking current prices and availability.";
-    try {
-      const rows = await api("/paintings");
-      if (ticket !== loadScreen.ticket || !state.user) return;
-      collection.replaceChildren(
-        ...(rows.length
-          ? rows.slice(0, 3).map(paintingCard)
-          : [emptyState("The collection is taking shape.", "The studio hasn’t added any paintings yet.")]),
-      );
-      note.textContent = "Explore the full collection for every original and current availability.";
-    } catch (error) {
-      if (ticket !== loadScreen.ticket) return;
-      const expired = error.status === 401;
-      if (expired) {
-        state.user = null;
-        updateHeader();
-      }
-      collection.replaceChildren(
-        emptyState(
-          expired ? "Please sign in again." : "We couldn’t load the collection.",
-          error.message,
-          button(
-            expired ? "Sign in" : "Retry collection",
-            expired ? () => beginLogin(false, "home") : loadHomeCollection,
-            "secondary",
-          ),
-        ),
-      );
-      note.textContent = "Live prices and availability are currently unavailable.";
-    } finally {
-      collection.removeAttribute("aria-busy");
-    }
-  }
-  if (state.user) loadHomeCollection();
-}
-function setupSectionMotion(scope) {
-  const media = window.matchMedia?.("(prefers-reduced-motion: reduce)");
-  if (media?.matches || !window.IntersectionObserver) return () => {};
-  const animations = new Set();
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        if (!media?.matches && entry.target.animate) {
-          const animation = entry.target.animate([{ transform: "translateY(24px)" }, { transform: "translateY(0)" }], {
-            duration: 850,
-            easing: "cubic-bezier(.2,.7,.2,1)",
-          });
-          animations.add(animation);
-          animation.finished.then(() => animations.delete(animation)).catch(() => {});
-        }
-        observer.unobserve(entry.target);
-      });
-    },
-    { threshold: 0.08 },
-  );
-  scope.querySelectorAll("[data-entrance]").forEach((node) => observer.observe(node));
-  const stop = () => {
-    observer.disconnect();
-    animations.forEach((animation) => animation.cancel());
-    animations.clear();
-  };
-  media?.addEventListener?.("change", stop);
-  return () => {
-    stop();
-    media?.removeEventListener?.("change", stop);
-  };
-}
-
-function setupStageDepth(stage) {
-  const motion = window.matchMedia?.("(prefers-reduced-motion: reduce)");
-  const fine = window.matchMedia?.("(hover: hover) and (pointer: fine)");
-  let frame;
-  const reset = () => {
-    stage.style.setProperty("--depth-x", "0px");
-    stage.style.setProperty("--depth-y", "0px");
-  };
-  const move = (event) => {
-    if (motion?.matches || !fine?.matches || event.pointerType === "touch") return;
-    window.cancelAnimationFrame?.(frame);
-    frame = requestAnimationFrame(() => {
-      const rect = stage.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      stage.style.setProperty("--depth-x", `${((event.clientX - rect.left) / rect.width - 0.5) * 12}px`);
-      stage.style.setProperty("--depth-y", `${((event.clientY - rect.top) / rect.height - 0.5) * 9}px`);
-    });
-  };
-  stage.addEventListener("pointermove", move);
-  stage.addEventListener("pointerleave", reset);
-  motion?.addEventListener?.("change", reset);
-  return () => {
-    window.cancelAnimationFrame?.(frame);
-    stage.removeEventListener("pointermove", move);
-    stage.removeEventListener("pointerleave", reset);
-    motion?.removeEventListener?.("change", reset);
-  };
-}
-
-const artworkViewer = document.querySelector("#artwork-viewer");
-let artworkReturnFocus;
-function closeArtwork() {
-  if (artworkViewer.open) artworkViewer.close();
-}
-artworkViewer.addEventListener("close", () => {
-  document.body.classList.remove("viewer-open");
-  if (artworkReturnFocus?.isConnected) artworkReturnFocus.focus();
-  else document.querySelector("#main").focus({ preventScroll: true });
-});
-artworkViewer.addEventListener("click", (event) => {
-  if (event.target === artworkViewer) closeArtwork();
-});
-artworkViewer.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") {
-    event.preventDefault();
-    if (!state.pending) closeArtwork();
-  }
-  if (event.key !== "Tab") return;
-  const nodes = [...artworkViewer.querySelectorAll('button:not(:disabled), a[href], [tabindex="0"]')];
-  const first = nodes[0],
-    last = nodes.at(-1);
-  if (!first) {
-    event.preventDefault();
-    return;
-  }
-  if (event.shiftKey && (document.activeElement === first || !artworkViewer.contains(document.activeElement))) {
-    event.preventDefault();
-    last.focus();
-  } else if (!event.shiftKey && document.activeElement === last) {
-    event.preventDefault();
-    first.focus();
-  }
-});
-artworkViewer.addEventListener("cancel", (event) => {
-  if (state.pending) event.preventDefault();
-});
 function purchasePainting(p) {
   return action(async () => {
     const order = await api("/orders", "POST", { paintingId: p.id });
@@ -526,87 +234,6 @@ function purchasePainting(p) {
     await loadScreen();
     message(`Order #${order.id} placed for ${money(order.price)}. You’ll find it in My orders.`);
   });
-}
-function openArtwork(p) {
-  if (state.pending) return;
-  artworkReturnFocus = document.activeElement;
-  const knownInventory = !!p.id && !!p.status;
-  const studio = state.user?.role === "studio";
-  const controls = el("div", { className: "viewer-actions" });
-  if (!knownInventory)
-    controls.append(
-      arrowButton("See price & availability", () => {
-        closeArtwork();
-        openScreen("gallery");
-      }),
-    );
-  else if (p.status === "available")
-    controls.append(
-      studio
-        ? button("Edit painting", () => {
-            closeArtwork();
-            openPainting(p);
-          })
-        : button("Buy painting", () => purchasePainting(p)),
-    );
-  else controls.append(el("p", { className: "unavailable-note" }, "This original is currently unavailable."));
-  const close = button("Close ×", closeArtwork, "viewer-close secondary");
-  artworkViewer.replaceChildren(
-    el("div", { className: "viewer-top" }, el("span", {}, "ART STUDIO / A CLOSER LOOK"), close),
-    el("div", { className: "viewer-layout" },
-      el("div", { className: "viewer-stage" }, el("img", { src: p.imageUrl, alt: p.title })),
-      el("div", { className: "viewer-details" },
-        el("p", { className: "eyebrow" }, knownInventory ? `Original / ${p.id}` : "From the collection"),
-        el("h2", { id: "artwork-title" }, p.title),
-        el("p", { className: "viewer-artist" }, p.artist),
-        el("p", { className: "viewer-description" }, p.description),
-        knownInventory
-          ? el("div", { className: "viewer-price" }, el("strong", {}, money(p.price)), badge(p.status))
-          : null,
-        el("p", { className: "viewer-error dialog-error", role: "alert" }),
-        controls,
-        el("p", { className: "hint" },
-          knownInventory
-            ? "Your order uses the current price and availability."
-            : "Sign in to see the live collection.",
-        ),
-      ),
-    ),
-  );
-  document.body.classList.add("viewer-open");
-  artworkViewer.showModal();
-  close.focus();
-}
-
-function field(form, label, name, type = "text", options = {}) {
-  const { hint, ...attributes } = options;
-  const id = `field-${++fieldCount}`;
-  const input = el(type === "textarea" ? "textarea" : "input", {
-    id,
-    name,
-    ...(type === "textarea" ? {} : { type }),
-    required: "",
-    ...attributes,
-  });
-  const wrapper = el("div", { className: "field" }, el("label", { for: id }, label), input);
-  if (hint) {
-    input.setAttribute("aria-describedby", `${id}-hint`);
-    wrapper.append(el("small", { className: "hint", id: `${id}-hint` }, hint));
-  }
-  form.append(wrapper);
-  return input;
-}
-function selectField(form, label, name, choices, value) {
-  const id = `field-${++fieldCount}`;
-  const select = el("select", { name, id, required: "" },
-    choices.map((choice) => el("option", { value: choice.id }, choice.name)),
-  );
-  if (value) select.value = value;
-  form.append(el("div", { className: "field" }, el("label", { for: id }, label), select));
-  return select;
-}
-function submit(form, label) {
-  form.append(el("button", { type: "submit" }, label));
 }
 function showAuth(signup = false) {
   homeCleanup();
@@ -631,17 +258,12 @@ function showAuth(signup = false) {
     hint: "Use 10–128 characters.",
   });
   submit(form, signup ? "Create customer account" : "Step inside");
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const body = Object.fromEntries(new FormData(form));
-    action(async () => {
-      state.user = await api(signup ? "/auth/signup" : "/auth/login", "POST", body);
-      state.screen = state.afterLogin || (state.user.role === "studio" ? "dashboard" : "gallery");
-      state.screen = resolveScreen(state.screen);
-      state.afterLogin = null;
-      await loadScreen();
-      if (state.user) message(`Welcome, ${state.user.name}.`);
-    });
+  handleForm(form, async (body) => {
+    state.user = await api(signup ? "/auth/signup" : "/auth/login", "POST", body);
+    state.screen = resolveScreen(state.afterLogin || (state.user.role === "studio" ? "dashboard" : "gallery"));
+    state.afterLogin = null;
+    await loadScreen();
+    if (state.user) message(`Welcome, ${state.user.name}.`);
   });
   const destination = {
     gallery: "the painting collection",
@@ -690,14 +312,6 @@ function showAuth(signup = false) {
         ),
       ),
     ),
-  );
-}
-function emptyState(title, detail, recovery) {
-  return el("div", { className: "state empty-state" },
-    el("span", { className: "state-mark", "aria-hidden": "true" }, "✳"),
-    el("h3", {}, title),
-    el("p", {}, detail),
-    recovery,
   );
 }
 function errorState(error) {
@@ -766,46 +380,6 @@ async function loadScreen() {
   }
 }
 loadScreen.ticket = 0;
-function paintingCard(p, index) {
-  const studio = state.user.role === "studio";
-  const bottom = el("div", { className: "card-bottom" }, el("span", { className: "price" }, money(p.price)));
-  if (p.status === "available")
-    bottom.append(
-      studio
-        ? button("Edit painting", () => openPainting(p), "secondary")
-        : button("Buy painting", () => purchasePainting(p)),
-    );
-  else bottom.append(el("span", { className: "unavailable-note" }, "Currently unavailable"));
-  return el(
-    "article",
-    {
-      className: `card painting-card enter${index === 0 || index === 7 ? " featured" : ""}${p.status === "sold" ? " is-sold" : ""}`,
-    },
-    el("div", { className: "painting-mount" },
-      el("img", {
-        src: p.imageUrl,
-        alt: p.title,
-        className: "painting-image",
-        loading: "lazy",
-      }),
-      (() => {
-        const look = button("View artwork ↗", () => openArtwork(p), "artwork-open");
-        look.setAttribute("aria-label", `View artwork: ${p.title}`);
-        return look;
-      })(),
-    ),
-    el("div", { className: "card-body" },
-      el("div", { className: "work-meta" },
-        el("span", {}, `WORK / ${p.id.startsWith("p-0") ? p.id.slice(2) : "STUDIO"}`),
-        badge(p.status),
-      ),
-      el("h2", {}, p.title),
-      el("p", { className: "artist" }, p.artist),
-      el("details", { className: "art-notes" }, el("summary", {}, "About this work"), el("p", {}, p.description)),
-      bottom,
-    ),
-  );
-}
 function showGallery(rows) {
   const studio = state.user.role === "studio";
   const results = el("div", { className: "gallery-grid" });
@@ -930,68 +504,24 @@ function openPainting(p) {
     p?.imageUrl,
   );
   submit(form, p ? "Save painting" : "Add painting");
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const body = Object.fromEntries(new FormData(form));
-    body.price = Number(body.price);
-    action(async () => {
-      await api(p ? `/paintings/${p.id}` : "/paintings", p ? "PUT" : "POST", body);
-      editor.close();
-      await loadScreen();
-      message(p ? "Painting saved." : "Painting added to the collection.");
-    });
+  handleForm(form, async (body) => {
+    await api(p ? `/paintings/${p.id}` : "/paintings", p ? "PUT" : "POST", body);
+    editor.close();
+    await loadScreen();
+    message(p ? "Painting saved." : "Painting added to the collection.");
   });
   openEditor(p ? "Edit available painting" : "Add an original", form);
 }
 function cancelButton(kind, row, label) {
-  return button(
-    label,
-    () =>
-      action(async () => {
-        const result = await api(`/${kind}/${row.id}/cancel`, "POST", {});
-        await loadScreen();
-        message(result.message);
-      }),
-    "danger",
-  );
+  return button(label, () => action(() => updateRecord(`/${kind}/${row.id}/cancel`)), "danger");
 }
 function decisionButtons(kind, row, statuses) {
-  const labels = {
-    confirmed: "Confirm",
-    declined: "Decline",
-    accepted: "Accept",
-  };
+  const labels = { confirmed: "Confirm", accepted: "Accept", declined: "Decline" };
   return statuses.map((status) =>
     button(
       labels[status],
-      () =>
-        action(async () => {
-          const result = await api(`/${kind}/${row.id}/decision`, "POST", {
-            status,
-          });
-          await loadScreen();
-          message(result.message);
-        }),
+      () => action(() => updateRecord(`/${kind}/${row.id}/decision`, { status })),
       status === "declined" ? "danger" : "",
-    ),
-  );
-}
-function recordTable(rows, columns, caption) {
-  return el("div", { className: "table-wrap", tabindex: "0", role: "region", "aria-label": caption },
-    el("table", {},
-      el("caption", { className: "sr-only" }, caption),
-      el("thead", {},
-        el("tr", {},
-          columns.map(([label]) => el("th", { scope: "col" }, label)),
-        ),
-      ),
-      el("tbody", {},
-        rows.map((row) =>
-          el("tr", {},
-            columns.map(([, content]) => el("td", {}, content(row))),
-          ),
-        ),
-      ),
     ),
   );
 }
@@ -1055,69 +585,16 @@ function filteredRecords(kind, rows, render, emptyText, statuses) {
   draw();
   return el("div", { className: "records-section" }, bar, count, results);
 }
-function customerName(row) {
-  return el("div", {},
-    el("strong", {}, row.customerName),
-    el("small", { className: "cell-detail" }, row.customerEmail),
-  );
-}
 function showOrders(rows) {
   const studio = state.user.role === "studio";
-  const render = (filtered) =>
-    studio
-      ? recordTable(
-          filtered,
-          [
-            [
-              "Order",
-              (row) =>
-                el("div", {},
-                  `#${row.id} · ${row.title}`,
-                  el("small", { className: "cell-detail" }, dateTime(row.createdAt)),
-                ),
-            ],
-            ["Customer", customerName],
-            ["Price", (row) => money(row.price)],
-            ["Status", (row) => badge(row.status)],
-            ["Management", () => "Customer-managed"],
-          ],
-          "All painting orders",
-        )
-      : el("div", { className: "records-list" },
-          filtered.map((row) =>
-            el("article", { className: "record order-record" },
-              el("img", {
-                src: row.imageUrl,
-                alt: row.title,
-                className: "order-thumbnail",
-                loading: "lazy",
-              }),
-              el("div", { className: "record-content" },
-                el("div", { className: "work-meta" }, el("span", {}, `ORDER / ${row.id}`), badge(row.status)),
-                el("h3", {}, row.title),
-                el("p", { className: "record-detail" }, `Placed ${dateTime(row.createdAt)} (Kolkata)`),
-                el("p", { className: "price" }, money(row.price)),
-              ),
-              row.status === "placed"
-                ? el("div", { className: "actions" }, cancelButton("orders", row, "Cancel order"))
-                : null,
-            ),
-          ),
-        );
   view.replaceChildren(
     heading(
       studio ? "Every original, accounted for." : "The pieces you picked.",
       "Placed orders can be cancelled, returning the painting to the collection.",
       studio ? "Studio / Orders" : "Your studio / Orders",
     ),
-    filteredRecords("orders", rows, render, "Your painting orders will appear here after you buy an available work.", [
-      "placed",
-      "cancelled",
-    ]),
+    records("orders", rows),
   );
-}
-function addDays(date, days) {
-  return new Date(Date.parse(`${date}T00:00:00Z`) + days * 86400000).toISOString().slice(0, 10);
 }
 function bookingForm() {
   const form = el("form");
@@ -1152,106 +629,15 @@ function bookingForm() {
         : "Add your wall size";
   });
   submit(form, "Request wall painting");
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const body = Object.fromEntries(new FormData(form));
-    body.wallSize = Number(body.wallSize);
-    action(async () => {
-      const row = await api("/bookings", "POST", body);
-      await loadScreen();
-      message(`Booking #${row.id} requested for ${money(row.total)}.`);
-    });
+  handleForm(form, async (body) => {
+    const row = await api("/bookings", "POST", body);
+    await loadScreen();
+    message(`Booking #${row.id} requested for ${money(row.total)}.`);
   });
   return form;
 }
-function bookingRecords(rows, studio) {
-  return filteredRecords(
-    "bookings",
-    rows,
-    (filtered) =>
-      studio
-        ? recordTable(
-            filtered,
-            [
-              ["Booking", (row) => `#${row.id} · ${row.date}`],
-              ["Customer", customerName],
-              [
-                "Wall & address",
-                (row) =>
-                  el("div", {},
-                    `${row.wallSize} sq ft · ${money(row.total)}`,
-                    el("small", { className: "cell-detail" }, row.address),
-                  ),
-              ],
-              ["Status", (row) => badge(row.status)],
-              [
-                "Decision",
-                (row) =>
-                  row.status === "requested"
-                    ? el("div", { className: "actions" }, decisionButtons("bookings", row, ["confirmed", "declined"]))
-                    : "No action needed",
-              ],
-            ],
-            "Wall-painting bookings",
-          )
-        : el("div", { className: "records-list" },
-            filtered.map((row) => {
-              const eligible = ["requested", "confirmed"].includes(row.status);
-              return el("article", { className: "record" },
-                el("div", { className: "work-meta" }, el("span", {}, `WALL / ${row.id}`), badge(row.status)),
-                el("h3", {}, row.date),
-                el("p", { className: "record-detail" }, row.address),
-                el("p", { className: "record-detail" }, `${row.wallSize} sq ft × ${money(row.rate)}/sq ft`),
-                el("p", { className: "price" }, money(row.total)),
-                eligible
-                  ? el("p", { className: "hint" },
-                      `Cancellation deadline: ${addDays(row.date, -3)}, 11:59:59 PM Kolkata time.`,
-                    )
-                  : null,
-                eligible && state.catalog.today <= addDays(row.date, -3)
-                  ? el("div", { className: "actions" }, cancelButton("bookings", row, "Cancel booking"))
-                  : null,
-              );
-            }),
-          ),
-    "Your wall-painting requests and studio decisions will appear here.",
-    ["requested", "confirmed", "declined", "cancelled"],
-  );
-}
 function showBookings(rows) {
-  const studio = state.user.role === "studio";
-  const policy =
-    "Requested and confirmed dates are reserved. Cancel through the day three days before your booking, in Kolkata time.";
-  const history = bookingRecords(rows, studio);
-  if (studio) {
-    view.replaceChildren(heading("Wall bookings.", policy, "Studio / Commissions"), history);
-    return;
-  }
-  view.replaceChildren(
-    el("div", { className: "service-intro indigo-intro enter" },
-      heading(
-        "Your walls are a blank canvas.",
-        "Start with a date, a wall and a little imagination. We’ll receive your request and confirm or decline it.",
-        "02 / A commission for your space",
-      ),
-      el("div", { className: "service-wall-study" }, makeWallStudy()),
-    ),
-    el("div", { className: "two-column" },
-      el("section", { className: "panel commission-panel", id: "wall-request" },
-        el("p", { className: "eyebrow" }, "The brief"),
-        el("h2", {}, "Tell us about your wall."),
-        bookingForm(),
-        el("p", { className: "hint policy-note" }, policy),
-      ),
-      el("section", {},
-        el("div", { className: "section-heading compact" },
-          el("h2", {}, "Your wall requests"),
-          el("span", { className: "handwritten" }, "In the making."),
-        ),
-        history,
-      ),
-    ),
-  );
+  showCommission("bookings", rows);
 }
 function potteryForm(row) {
   const form = el("form");
@@ -1300,119 +686,24 @@ function potteryForm(row) {
     ),
   );
   submit(form, row ? "Save request" : "Request pottery");
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const body = Object.fromEntries(new FormData(form));
-    body.quantity = Number(body.quantity);
-    action(async () => {
-      await api(row ? `/pottery/${row.id}` : "/pottery", row ? "PUT" : "POST", body);
-      if (row) editor.close();
-      await loadScreen();
-      message(row ? "Pottery request updated." : "Your pottery request is with the studio.");
-    });
+  handleForm(form, async (body) => {
+    await api(row ? `/pottery/${row.id}` : "/pottery", row ? "PUT" : "POST", body);
+    if (row) editor.close();
+    await loadScreen();
+    message(row ? "Pottery request updated." : "Your pottery request is with the studio.");
   });
   return form;
 }
-function potteryRecords(rows, studio) {
-  return filteredRecords(
-    "pottery",
-    rows,
-    (filtered) =>
-      studio
-        ? recordTable(
-            filtered,
-            [
-              ["Request", (row) => `#${row.id} · ${row.item}`],
-              ["Customer", customerName],
-              [
-                "Details",
-                (row) =>
-                  el("div", {},
-                    `${row.quantity} × ${row.glaze}`,
-                    el("small", { className: "cell-detail" }, `Needed by ${row.neededBy}`),
-                  ),
-              ],
-              ["Status", (row) => badge(row.status)],
-              [
-                "Decision",
-                (row) =>
-                  row.status === "requested"
-                    ? el("div", { className: "actions" }, decisionButtons("pottery", row, ["accepted", "declined"]))
-                    : "No action needed",
-              ],
-            ],
-            "Custom pottery requests",
-          )
-        : el("div", { className: "records-list" },
-            filtered.map((row) =>
-              el("article", { className: "record" },
-                el("div", { className: "work-meta" }, el("span", {}, `CLAY / ${row.id}`), badge(row.status)),
-                el("h3", {}, row.item),
-                el("p", { className: "record-detail" }, `${row.glaze} · Quantity ${row.quantity}`),
-                el("p", { className: "record-detail" }, `Needed by ${row.neededBy}`),
-                row.status === "requested"
-                  ? el("div", { className: "actions" },
-                      button(
-                        "Edit request",
-                        () => openEditor("Refine your pottery request", potteryForm(row)),
-                        "secondary",
-                      ),
-                      cancelButton("pottery", row, "Cancel request"),
-                    )
-                  : null,
-              ),
-            ),
-          ),
-    "Your custom pottery requests will appear here.",
-    ["requested", "accepted", "declined", "cancelled"],
-  );
-}
 function showPottery(rows) {
-  const studio = state.user.role === "studio";
-  const history = potteryRecords(rows, studio);
-  if (studio) {
-    view.replaceChildren(
-      heading(
-        "Pottery requests.",
-        "Review the chosen forms, glazes and dates. Accept or decline requested pieces.",
-        "Studio / Clay",
-      ),
-      history,
-    );
-    return;
-  }
-  view.replaceChildren(
-    el("div", { className: "service-intro clay-intro enter" },
-      heading(
-        "Made by hand. Imagined by you.",
-        "Choose a form, a glaze and a date. A small idea can become something you use every day.",
-        "03 / A commission in clay",
-      ),
-      el("div", { className: "commission-clay" }, clayObject("i-02", state.potteryGlaze)),
-    ),
-    el("div", { className: "two-column" },
-      el("section", { className: "panel commission-panel", id: "pottery-request" },
-        el("p", { className: "eyebrow" }, "The brief"),
-        el("h2", {}, "Shape your request."),
-        potteryForm(),
-      ),
-      el("section", {},
-        el("div", { className: "section-heading compact" },
-          el("h2", {}, "Your pottery requests"),
-          el("span", { className: "handwritten" }, "Little things, made personal."),
-        ),
-        history,
-      ),
-    ),
-  );
+  showCommission("pottery", rows);
 }
 function showDashboard(data) {
-  const requestedWalls = data.bookings.filter((row) => row.status === "requested");
-  const requestedPottery = data.pottery.filter((row) => row.status === "requested");
+  const walls = data.bookings.filter((row) => row.status === "requested");
+  const pottery = data.pottery.filter((row) => row.status === "requested");
   const metrics = [
     [data.paintings.filter((row) => row.status === "available").length, "Available paintings", "gallery"],
-    [requestedWalls.length, "Wall requests to review", "bookings"],
-    [requestedPottery.length, "Pottery requests to review", "pottery"],
+    [walls.length, "Wall requests to review", "bookings"],
+    [pottery.length, "Pottery requests to review", "pottery"],
     [data.orders.filter((row) => row.status === "placed").length, "Placed orders", "orders"],
   ];
   view.replaceChildren(
@@ -1428,49 +719,8 @@ function showDashboard(data) {
         return metric;
       }),
     ),
-    el("section", { className: "dashboard-section" },
-      el("div", { className: "section-heading compact" },
-        el("h2", {}, "Wall requests to review"),
-        arrowButton("All wall bookings", () => openScreen("bookings"), "text-button"),
-      ),
-      requestedWalls.length
-        ? recordTable(
-            requestedWalls,
-            [
-              ["Date", (row) => row.date],
-              ["Customer", customerName],
-              ["Wall", (row) => `${row.wallSize} sq ft · ${money(row.total)}`],
-              [
-                "Decision",
-                (row) =>
-                  el("div", { className: "actions" }, decisionButtons("bookings", row, ["confirmed", "declined"])),
-              ],
-            ],
-            "Requested wall bookings",
-          )
-        : emptyState("The wall workbench is clear.", "No wall requests are waiting for a decision."),
-    ),
-    el("section", { className: "dashboard-section" },
-      el("div", { className: "section-heading compact" },
-        el("h2", {}, "Pottery requests to review"),
-        arrowButton("All pottery requests", () => openScreen("pottery"), "text-button"),
-      ),
-      requestedPottery.length
-        ? recordTable(
-            requestedPottery,
-            [
-              ["Item", (row) => row.item],
-              ["Customer", customerName],
-              ["Needed by", (row) => row.neededBy],
-              [
-                "Decision",
-                (row) => el("div", { className: "actions" }, decisionButtons("pottery", row, ["accepted", "declined"])),
-              ],
-            ],
-            "Requested pottery",
-          )
-        : emptyState("The clay workbench is clear.", "No pottery requests are waiting for a decision."),
-    ),
+    dashboardSection("bookings", walls),
+    dashboardSection("pottery", pottery),
   );
 }
 const routeNames = new Set(["home", "auth", "gallery", "orders", "bookings", "pottery", "dashboard"]);
